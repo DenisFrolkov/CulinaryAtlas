@@ -50,7 +50,9 @@ fun RegistrationScreen() {
     val backgroundPainter = painterResource(id = R.drawable.login_window_background)
     val iconLogo = painterResource(id = R.drawable.logo_icon)
     var login by remember { mutableStateOf(TextFieldValue()) }
+    var email by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
+    var rePassword by remember { mutableStateOf(TextFieldValue()) }
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -136,16 +138,16 @@ fun RegistrationScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 BasicTextField(
-                    value = password,
+                    value = email,
                     onValueChange = {
-                        password = it
+                        email = it
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp, 10.dp, 20.dp, 0.dp),
                     textStyle = TextStyle(fontSize = 20.sp),
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Password,
+                        keyboardType = KeyboardType.Text,
                     )
                 )
             }
@@ -198,9 +200,9 @@ fun RegistrationScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 BasicTextField(
-                    value = password,
+                    value = rePassword,
                     onValueChange = {
-                        password = it
+                        rePassword = it
                     },
                     modifier = Modifier
                         .fillMaxWidth()
