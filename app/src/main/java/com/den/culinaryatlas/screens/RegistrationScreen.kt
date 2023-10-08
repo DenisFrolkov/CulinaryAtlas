@@ -23,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -45,7 +44,7 @@ import com.den.culinaryatlas.ui.theme.Orange3
 
 @Preview
 @Composable
-fun AuthorizationScreen() {
+fun RegistrationScreen() {
     val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
     val normalFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val backgroundPainter = painterResource(id = R.drawable.login_window_background)
@@ -57,8 +56,7 @@ fun AuthorizationScreen() {
             .fillMaxSize()
             .background(color = Orange1),
         contentColor = Color.Black
-    )
-    {
+    ) {
         Image(
             modifier = Modifier
                 .fillMaxSize(),
@@ -69,7 +67,7 @@ fun AuthorizationScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
                 modifier = Modifier
@@ -79,11 +77,13 @@ fun AuthorizationScreen() {
                 painter = iconLogo,
                 contentDescription = "Logo icon"
             )
+
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(0.dp, 20.dp, 0.dp, 27.dp),
-                text = "С Возвращением!",
+                    .size(274.dp, 86.dp)
+                    .padding(0.dp, 20.dp, 0.dp, 15.dp),
+                text = "Добро пожаловать!",
                 textAlign = TextAlign.Center,
                 fontSize = 44.sp,
                 fontFamily = roundedFont,
@@ -121,10 +121,11 @@ fun AuthorizationScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(35.dp, 15.dp, 35.dp, 2.dp)
+                    .padding(35.dp, 8.dp, 35.dp, 8.dp)
                     .border(
                         width = 1.dp,
                         color = Color.Gray,
+
                         shape = RoundedCornerShape(size = 20.dp)
                     )
                     .size(290.dp, 56.dp)
@@ -148,20 +149,73 @@ fun AuthorizationScreen() {
                     )
                 )
             }
-            Text(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(50.dp, 2.dp, 170.dp, 25.dp),
-                text = "Забыли пароль?",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Normal,
-                fontFamily = normalFont,
-            )
+                    .padding(35.dp, 8.dp, 35.dp, 8.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.Gray,
+
+                        shape = RoundedCornerShape(size = 20.dp)
+                    )
+                    .size(290.dp, 56.dp)
+                    .background(
+                        color = Orange2,
+                        shape = RoundedCornerShape(size = 20.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                BasicTextField(
+                    value = password,
+                    onValueChange = {
+                        password = it
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp, 10.dp, 20.dp, 0.dp),
+                    textStyle = TextStyle(fontSize = 20.sp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Password,
+                    )
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(35.dp, 8.dp, 35.dp, 8.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.Gray,
+
+                        shape = RoundedCornerShape(size = 20.dp)
+                    )
+                    .size(290.dp, 56.dp)
+                    .background(
+                        color = Orange2,
+                        shape = RoundedCornerShape(size = 20.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                BasicTextField(
+                    value = password,
+                    onValueChange = {
+                        password = it
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp, 10.dp, 20.dp, 0.dp),
+                    textStyle = TextStyle(fontSize = 20.sp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Password,
+                    )
+                )
+            }
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(110.dp, 25.dp, 110.dp, 2.dp)
-                    .size(138.dp, 56.dp),
+                    .padding(44.dp, 25.dp, 44.dp, 2.dp)
+                    .size(272.dp, 56.dp),
                 onClick = { },
                 colors = ButtonDefaults.buttonColors(
                     Orange3
@@ -169,11 +223,11 @@ fun AuthorizationScreen() {
             ) {
                 Text(
                     modifier = Modifier
-                        .size(138.dp, 56.dp)
+                        .size(254.dp, 56.dp)
                         .wrapContentSize(Alignment.Center),
-                    text = "Войти",
+                    text = "Зарегистрироваться",
                     textAlign = TextAlign.Center,
-                    fontSize = 36.sp,
+                    fontSize = 34.sp,
                     fontFamily = roundedFont,
                     color = Color.Black
                 )
@@ -182,7 +236,7 @@ fun AuthorizationScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 2.dp, 0.dp, 0.dp),
-                text = "Впервые у нас? Создай аккаунт!",
+                text = "Вернуть на экран авторизации?",
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
