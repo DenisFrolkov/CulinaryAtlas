@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.ui.theme.Orange1
 import com.den.culinaryatlas.ui.theme.Orange2
-import com.den.culinaryatlas.ui.theme.Orange3
 
 @Preview
 @Composable
@@ -163,9 +162,7 @@ fun AuthorizationScreen() {
                     .padding(110.dp, 25.dp, 110.dp, 2.dp)
                     .size(138.dp, 56.dp),
                 onClick = { },
-                colors = ButtonDefaults.buttonColors(
-                    Orange3
-                )
+                colors = ButtonDefaults.buttonColors(Orange1)
             ) {
                 Text(
                     modifier = Modifier
