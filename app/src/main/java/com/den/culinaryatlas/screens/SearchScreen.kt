@@ -19,12 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.den.culinaryatlas.ui.theme.Orange1
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 fun SearchScreen() {
     var searchText by remember { mutableStateOf("") }

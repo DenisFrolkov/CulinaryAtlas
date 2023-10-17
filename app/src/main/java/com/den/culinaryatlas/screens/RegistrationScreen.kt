@@ -34,16 +34,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.ui.theme.Orange1
 import com.den.culinaryatlas.ui.theme.Orange2
 
-@Preview
 @Composable
-fun RegistrationScreen() {
+fun RegistrationScreen(onClick: () -> Unit) {
     val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
     val normalFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val backgroundPainter = painterResource(id = R.drawable.login_window_background)
@@ -64,7 +62,8 @@ fun RegistrationScreen() {
             painter = backgroundPainter,
             contentDescription = "Application background",
             contentScale = ContentScale.FillBounds,
-        )
+
+            )
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -217,7 +216,9 @@ fun RegistrationScreen() {
                     .fillMaxWidth()
                     .padding(44.dp, 25.dp, 44.dp, 2.dp)
                     .size(272.dp, 56.dp),
-                onClick = { },
+                onClick = {
+                    onClick()
+                },
                 colors = ButtonDefaults.buttonColors(Orange1)
             ) {
                 Text(
