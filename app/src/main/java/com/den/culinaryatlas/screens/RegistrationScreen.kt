@@ -34,23 +34,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.ui.theme.Orange1
 import com.den.culinaryatlas.ui.theme.Orange2
-import com.den.culinaryatlas.ui.theme.Orange3
 
-@Preview
 @Composable
-fun RegistrationScreen() {
+fun RegistrationScreen(onClick: () -> Unit) {
     val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
     val normalFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val backgroundPainter = painterResource(id = R.drawable.login_window_background)
     val iconLogo = painterResource(id = R.drawable.logo_icon)
     var login by remember { mutableStateOf(TextFieldValue()) }
+    var email by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
+    var rePassword by remember { mutableStateOf(TextFieldValue()) }
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +62,8 @@ fun RegistrationScreen() {
             painter = backgroundPainter,
             contentDescription = "Application background",
             contentScale = ContentScale.FillBounds,
-        )
+
+            )
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -136,16 +136,16 @@ fun RegistrationScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 BasicTextField(
-                    value = password,
+                    value = email,
                     onValueChange = {
-                        password = it
+                        email = it
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp, 10.dp, 20.dp, 0.dp),
                     textStyle = TextStyle(fontSize = 20.sp),
                     keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Password,
+                        keyboardType = KeyboardType.Text,
                     )
                 )
             }
@@ -198,9 +198,9 @@ fun RegistrationScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 BasicTextField(
-                    value = password,
+                    value = rePassword,
                     onValueChange = {
-                        password = it
+                        rePassword = it
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -216,10 +216,10 @@ fun RegistrationScreen() {
                     .fillMaxWidth()
                     .padding(44.dp, 25.dp, 44.dp, 2.dp)
                     .size(272.dp, 56.dp),
-                onClick = { },
-                colors = ButtonDefaults.buttonColors(
-                    Orange3
-                )
+                onClick = {
+                    onClick()
+                },
+                colors = ButtonDefaults.buttonColors(Orange1)
             ) {
                 Text(
                     modifier = Modifier

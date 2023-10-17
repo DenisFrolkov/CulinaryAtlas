@@ -3,6 +3,7 @@ package com.den.culinaryatlas.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,17 +36,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.ui.theme.Orange1
 import com.den.culinaryatlas.ui.theme.Orange2
-import com.den.culinaryatlas.ui.theme.Orange3
 
-@Preview
 @Composable
-fun AuthorizationScreen() {
+fun AuthorizationScreen(onClick: () -> Unit) {
     val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
     val normalFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val backgroundPainter = painterResource(id = R.drawable.login_window_background)
@@ -162,10 +160,8 @@ fun AuthorizationScreen() {
                     .fillMaxWidth()
                     .padding(110.dp, 25.dp, 110.dp, 2.dp)
                     .size(138.dp, 56.dp),
-                onClick = { },
-                colors = ButtonDefaults.buttonColors(
-                    Orange3
-                )
+                onClick = { onClick() },
+                colors = ButtonDefaults.buttonColors(Orange1)
             ) {
                 Text(
                     modifier = Modifier
@@ -180,8 +176,8 @@ fun AuthorizationScreen() {
             }
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 2.dp, 0.dp, 0.dp),
+                    .clickable { onClick() }
+                    .padding(top = 2.dp),
                 text = "Впервые у нас? Создай аккаунт!",
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
