@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.navigatingscreens.Route
+import com.den.culinaryatlas.navigatingscreens.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Orange1
 import com.den.culinaryatlas.ui.theme.Orange2
 
@@ -222,7 +222,7 @@ fun RegistrationScreen(
                     .padding(44.dp, 25.dp, 44.dp, 2.dp)
                     .size(272.dp, 56.dp),
                 onClick = {
-                    navController.navigate(Route.BottomnavigationScreens.route)
+                    navController.navigate(NavigationRoute.BottomnavigationScreens.route)
                 },
                 colors = ButtonDefaults.buttonColors(Orange1)
             ) {
@@ -240,7 +240,7 @@ fun RegistrationScreen(
             Text(
                 modifier = Modifier
                     .clickable {
-                        navController.navigate(Route.AuthorizationScreen.route)
+                        navController.navigate(NavigationRoute.AuthorizationScreen.route)
                     }
                     .padding(top = 2.dp),
                 text = "Вернуть на экран авторизации?",

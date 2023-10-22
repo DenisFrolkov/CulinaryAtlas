@@ -17,11 +17,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.den.culinaryatlas.ui.theme.Orange1
 
 @Composable
-fun BottomNav(navController: NavController) {
+fun BottomNavigation(navController: NavController) {
     val listItems = listOf(
-        BottomItem.SearchScreen,
-        BottomItem.CookbookScreen,
-        BottomItem.ProfileScreen
+        BottomNavigationItem.SearchScreen,
+        BottomNavigationItem.CookbookScreen,
+        BottomNavigationItem.ProfileScreen
     )
 
     BottomNavigation(

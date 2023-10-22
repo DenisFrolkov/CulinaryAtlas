@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.horizontalpager.TabItem
+import com.den.culinaryatlas.cookbooktabitem.CookbookTabItem
 import com.den.culinaryatlas.ui.theme.Orange1
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -39,12 +39,12 @@ import com.den.culinaryatlas.ui.theme.Orange1
 fun CookbookScreen() {
     val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
     val tabItems = listOf(
-        TabItem(
+        CookbookTabItem(
             title = "Мои рецепты",
             item = R.drawable.apron_item,
 
         ),
-        TabItem(
+        CookbookTabItem(
             title = "Сохранненые рецепты",
             item = R.drawable.cookbook_item
         )

@@ -12,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 fun BottomNavigationScreen(onClick: () -> Unit) {
     val navController = rememberNavController()
     Scaffold(
-        bottomBar = { BottomNav(navController = navController) },
+        bottomBar = { BottomNavigation(navController = navController) },
         modifier = Modifier.fillMaxWidth()
     ) {
         NavGraph(navHostController = navController)

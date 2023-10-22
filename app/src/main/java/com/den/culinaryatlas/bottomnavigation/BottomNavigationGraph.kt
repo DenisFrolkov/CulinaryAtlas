@@ -12,14 +12,14 @@ import com.den.culinaryatlas.screens.SearchScreen
 fun NavGraph(
     navHostController: NavHostController
 ) {
-    NavHost(navController = navHostController, startDestination = Route.SearchScreen.route){
-        composable(Route.SearchScreen.route) {
+    NavHost(navController = navHostController, startDestination = BottomNavigationRoute.SearchScreen.route){
+        composable(BottomNavigationRoute.SearchScreen.route) {
             SearchScreen()
         }
-        composable(Route.CookbookScreen.route) {
+        composable(BottomNavigationRoute.CookbookScreen.route) {
             CookbookScreen()
         }
-        composable(Route.ProfileScreen.route) {
+        composable(BottomNavigationRoute.ProfileScreen.route) {
             ProfileScreen()
         }
 
