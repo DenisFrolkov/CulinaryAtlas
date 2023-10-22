@@ -13,27 +13,22 @@ fun Navigation() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = "authorization"
+        startDestination = Route.AuthorizationScreen.route
     ) {
-        composable("authorization"){
-            AuthorizationScreen {
-                navController.navigate("registration")
-            }
+        composable(Route.AuthorizationScreen.route){
+            AuthorizationScreen(navController)
         }
-        composable("registration"){
-            RegistrationScreen {
-                navController.navigate("bottomnavigation")
-            }
+        composable(Route.RegistrationScreen.route){
+            RegistrationScreen(navController)
         }
-        composable("bottomnavigation"){
+        composable(Route.BottomnavigationScreens.route){
             BottomNavigationScreen{
-                navController.navigate("authorization"){
-                    popUpTo("authorization"){
+                navController.navigate(Route.AuthorizationScreen.route){
+                    popUpTo(Route.AuthorizationScreen.route){
                         inclusive = true
                     }
                 }
             }
         }
-
     }
 }

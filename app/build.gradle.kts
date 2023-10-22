@@ -71,5 +71,4 @@ dependencies {
     //My dependencies
     //NavigationCompose
     implementation("androidx.navigation:navigation-compose:2.7.4")
-
 }

@@ -3,6 +3,7 @@ package com.den.culinaryatlas.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,12 +37,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.navigatingscreens.Route
 import com.den.culinaryatlas.ui.theme.Orange1
 import com.den.culinaryatlas.ui.theme.Orange2
 
 @Composable
-fun RegistrationScreen(onClick: () -> Unit) {
+fun RegistrationScreen(
+    navController: NavController
+) {
     val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
     val normalFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val backgroundPainter = painterResource(id = R.drawable.login_window_background)
@@ -217,7 +222,7 @@ fun RegistrationScreen(onClick: () -> Unit) {
                     .padding(44.dp, 25.dp, 44.dp, 2.dp)
                     .size(272.dp, 56.dp),
                 onClick = {
-                    onClick()
+                    navController.navigate(Route.BottomnavigationScreens.route)
                 },
                 colors = ButtonDefaults.buttonColors(Orange1)
             ) {
@@ -234,8 +239,10 @@ fun RegistrationScreen(onClick: () -> Unit) {
             }
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 2.dp, 0.dp, 0.dp),
+                    .clickable {
+                        navController.navigate(Route.AuthorizationScreen.route)
+                    }
+                    .padding(top = 2.dp),
                 text = "Вернуть на экран авторизации?",
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,

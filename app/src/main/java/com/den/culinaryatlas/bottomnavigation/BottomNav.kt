@@ -41,10 +41,10 @@ fun BottomNav(navController: NavController) {
                     Icon(
                         painter = painterResource(id = item.icon),
                         contentDescription = "icon",
-                        modifier = Modifier.size(34.dp, 38.dp)
+                        modifier = Modifier.size(38.dp, 38.dp)
                     )
                 },
-                selectedContentColor = Color.Black,
+                selectedContentColor = Color.White,
                 unselectedContentColor = Color.Black
             )
         }

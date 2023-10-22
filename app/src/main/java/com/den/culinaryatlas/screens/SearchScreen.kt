@@ -19,15 +19,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.den.culinaryatlas.ui.theme.Orange1
 
+@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen() {
     var searchText by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
-
     SearchBar(
         query = searchText,
         onQueryChange = { text -> searchText = text },
@@ -42,13 +43,15 @@ fun SearchScreen() {
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp)
             .clip(RoundedCornerShape(23.dp)),
-        placeholder = { Text(text = "Введите название блюда",
-            color = Color.Black) },
+        placeholder = {
+            Text(
+                text = "Введите название блюда",
+                color = Color.Black
+            )
+        },
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         trailingIcon = { Icon(Icons.Default.Clear, contentDescription = null) },
-        colors = SearchBarDefaults.colors(
-            containerColor = Orange1,
-        )
+        colors = SearchBarDefaults.colors(containerColor = Orange1)
     ) {
 
     }

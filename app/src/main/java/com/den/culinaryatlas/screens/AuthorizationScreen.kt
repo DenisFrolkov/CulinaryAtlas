@@ -38,12 +38,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.navigatingscreens.Route
 import com.den.culinaryatlas.ui.theme.Orange1
 import com.den.culinaryatlas.ui.theme.Orange2
 
 @Composable
-fun AuthorizationScreen(onClick: () -> Unit) {
+fun AuthorizationScreen(
+    navController: NavController
+) {
     val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
     val normalFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val backgroundPainter = painterResource(id = R.drawable.login_window_background)
@@ -160,7 +164,9 @@ fun AuthorizationScreen(onClick: () -> Unit) {
                     .fillMaxWidth()
                     .padding(110.dp, 25.dp, 110.dp, 2.dp)
                     .size(138.dp, 56.dp),
-                onClick = { onClick() },
+                onClick = {
+                    navController.navigate(Route.BottomnavigationScreens.route)
+                },
                 colors = ButtonDefaults.buttonColors(Orange1)
             ) {
                 Text(
@@ -176,7 +182,9 @@ fun AuthorizationScreen(onClick: () -> Unit) {
             }
             Text(
                 modifier = Modifier
-                    .clickable { onClick() }
+                    .clickable {
+                        navController.navigate(Route.RegistrationScreen.route)
+                    }
                     .padding(top = 2.dp),
                 text = "Впервые у нас? Создай аккаунт!",
                 textAlign = TextAlign.Center,
