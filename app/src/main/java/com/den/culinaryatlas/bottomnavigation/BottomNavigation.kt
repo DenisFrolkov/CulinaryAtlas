@@ -1,5 +1,6 @@
 package com.den.culinaryatlas.bottomnavigation
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
@@ -26,6 +27,7 @@ fun BottomNavigation(navController: NavController) {
 
     BottomNavigation(
         modifier = Modifier
+            .height(60.dp)
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
         backgroundColor = Orange1
     ) {
