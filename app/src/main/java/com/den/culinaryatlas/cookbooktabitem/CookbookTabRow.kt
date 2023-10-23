@@ -1,9 +1,8 @@
-package com.den.culinaryatlas.screens
+package com.den.culinaryatlas.cookbooktabitem
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,20 +29,22 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.cookbooktabitem.CookbookTabItem
+import com.den.culinaryatlas.screens.CookbookScreen.MyRecipeScreen
+import com.den.culinaryatlas.screens.CookbookScreen.SavedRecipeScreen
 import com.den.culinaryatlas.ui.theme.Orange1
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CookbookScreen() {
-    val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
+fun CookbookTabRow() {
     val tabItems = listOf(
         CookbookTabItem(
             title = "Мои рецепты",
             item = R.drawable.apron_item,
 
-        ),
+            ),
         CookbookTabItem(
             title = "Сохранненые рецепты",
             item = R.drawable.cookbook_item
@@ -55,60 +56,56 @@ fun CookbookScreen() {
     LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
         if(!pagerState.isScrollInProgress) selectedTabIndex = pagerState.currentPage
     }
-    Column(modifier = Modifier
-        .fillMaxSize()
+    val roundedFont = FontFamily(Font(R.font.brushscriptmtrusbyme_italic))
+    TabRow(
+        selectedTabIndex = selectedTabIndex,
+        modifier = Modifier
+            .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)),
+        backgroundColor = Orange1
     ) {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            modifier = Modifier
-                .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)),
-            backgroundColor = Orange1
-        ) {
-            tabItems.forEachIndexed { index, tabItem ->
-                Tab(
-                    selected = index == selectedTabIndex,
-                    onClick = {
-                        selectedTabIndex = index
-                    },
-                    content = {
-                        Row(
+        tabItems.forEachIndexed { index, tabItem ->
+            Tab(
+                selected = index == selectedTabIndex,
+                onClick = {
+                    selectedTabIndex = index
+                },
+                content = {
+                    Row(
+                        modifier = Modifier
+                            .height(66.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = tabItem.item),
+                            contentDescription = tabItem.title
+                        )
+                        Spacer(
                             modifier = Modifier
-                                .height(66.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = painterResource(id = tabItem.item),
-                                contentDescription = tabItem.title
-                            )
-                            Spacer(
-                                modifier = Modifier
-                                    .width(10.dp)
-                            )
-                            Text(
-                                text = tabItem.title,
-                                fontFamily = roundedFont,
-                                fontSize = 20.sp,
-                                softWrap = true,
-                                color = Color.Black
-                            )
-                        }
-                    },
-                )
+                                .width(10.dp)
+                        )
+                        Text(
+                            text = tabItem.title,
+                            fontFamily = roundedFont,
+                            fontSize = 20.sp,
+                            softWrap = true,
+                            color = Color.Black
+                        )
+                    }
+                },
+            )
+        }
+    }
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {index -> 
+        Box {
+            when (index) {
+                0 -> MyRecipeScreen()
+                1 -> SavedRecipeScreen()
             }
         }
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
-        ) { index ->
-            Box(
-                modifier = Modifier
-                .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Text(text = tabItems[index].title)
-            }
-        }
+        
     }
 }

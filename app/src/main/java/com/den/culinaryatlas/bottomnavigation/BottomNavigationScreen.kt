@@ -15,6 +15,6 @@ fun BottomNavigationScreen(onClick: () -> Unit) {
         bottomBar = { BottomNavigation(navController = navController) },
         modifier = Modifier.fillMaxWidth()
     ) {
-        NavGraph(navHostController = navController)
+        BottomNavigationGraph(navHostController = navController)
     }
 }
