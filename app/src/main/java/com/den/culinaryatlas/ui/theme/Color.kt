@@ -13,3 +13,4 @@ val Pink40 = Color(0xFF7D5260)
 // Colors used in this project
 val Orange1 = Color(0xFFFDAC53)
 val Orange2 = Color(0x99FDAC53)
+val SoftOrange = Color(0xFFF7DEC2)
