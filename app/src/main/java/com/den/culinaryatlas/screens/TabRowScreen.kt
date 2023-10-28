@@ -43,10 +43,11 @@ fun TabRowScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(bottom = 56.dp)
     ) {
         TabRow(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(start = 16.dp,top = 16.dp, end = 16.dp)
                 .clip(shape = RoundedCornerShape(12.dp)),
             selectedTabIndex = selectedTabIndex
         ) {

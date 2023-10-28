@@ -1,11 +1,13 @@
 package com.den.culinaryatlas.bottom_navigation
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -21,6 +23,7 @@ fun BottomNavigation(
         BottomItem.CreatingRecipeScreen
     )
     androidx.compose.material.BottomNavigation(
+        modifier = Modifier.clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
         backgroundColor = BasicOrange
     ) {
         val backStackEntry by navController.currentBackStackEntryAsState()
