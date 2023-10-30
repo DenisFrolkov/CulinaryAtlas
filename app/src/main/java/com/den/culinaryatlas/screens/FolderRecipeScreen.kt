@@ -1,9 +1,7 @@
 package com.den.culinaryatlas.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.ui.theme.Gray
+import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Preview
 @Composable
@@ -49,7 +48,7 @@ fun FolderRecipeScreen() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(6.dp)
-                        .border(4.dp, Gray, RoundedCornerShape(12.dp))
+                        .border(1.5.dp, Gray, RoundedCornerShape(12.dp))
                 ) {
                     Text(
                         modifier = Modifier
@@ -73,7 +72,8 @@ fun FolderRecipeScreen() {
                             .fillMaxWidth()
                             .height(66.dp)
                             .padding(top = 10.dp)
-                            .border(BorderStroke(.1.dp, Gray), RoundedCornerShape(12.dp))
+                            .background(SoftOrange,RoundedCornerShape(12.dp))
+                            .border(.1.dp, Gray, RoundedCornerShape(12.dp))
                     ) {
                         Row(
                             modifier = Modifier
