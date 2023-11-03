@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,16 +34,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
-@Preview
 @Composable
-fun CreatingFolderRecipeScreen() {
+fun CreatingFolderRecipeScreen(
+    navController: NavController
+) {
     val montserrat_alternates_italic_font = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
     var isBoxNameClicked by remember { mutableStateOf(false) }
@@ -57,7 +59,13 @@ fun CreatingFolderRecipeScreen() {
             Icon(
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
-                    .size(26.dp),
+                    .size(26.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        navController.popBackStack()
+                    },
                 painter = painterResource(id = R.drawable.back_screen_icon),
                 contentDescription = "Вернутся на предыдущий экран"
             )
@@ -251,15 +259,14 @@ fun CreatingFolderRecipeScreen() {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight()
-                        ,
+                            .fillMaxHeight(),
                         contentAlignment = Alignment.BottomCenter
                     ) {
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.BottomCenter)
-                                .padding(start = 90.dp, end = 90.dp, bottom = 40.dp)
+                                .padding(start = 90.dp, end = 90.dp, bottom = 16.dp)
                                 .height(40.dp),
                             colors = ButtonDefaults.buttonColors(Color.White),
                             onClick = { }
