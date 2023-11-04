@@ -15,10 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +42,8 @@ fun ViewRecipeScreen(
 ) {
     val montserrat_alternates_italic_font = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
+    var expanded by remember { mutableStateOf(false) }
+    val items = listOf("Редактирова", "Удалить")
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -66,12 +72,57 @@ fun ViewRecipeScreen(
                     painter = painterResource(id = R.drawable.back_screen_icon),
                     contentDescription = "Вернуться напредыдуший экрна"
                 )
-                Icon(
-                    modifier = Modifier
-                        .size(26.dp),
-                    painter = painterResource(id = R.drawable.edit_infomation_item),
-                    contentDescription = "Изменить информацию"
-                )
+                Box(
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(26.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                expanded = true
+                            },
+                        painter = painterResource(id = R.drawable.edit_infomation_item),
+                        contentDescription = "Изменить информацию"
+                    )
+                    DropdownMenu(
+                        modifier = Modifier
+                            .size(184.dp, 110.dp),
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                    ) {
+                        items.forEach { item ->
+                            androidx.compose.material.DropdownMenuItem(
+                                onClick = {
+                                    expanded = false
+                                    when (item) {
+                                        "Редактировать" -> {
+
+                                        }
+
+                                        "Удалить" -> {
+
+                                        }
+                                    }
+                                }
+                            ) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = item,
+                                        fontSize = 18.sp,
+                                        color = Color.Black,
+                                        fontFamily = montserrat_alternates_italic_font
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
             Text(
                 modifier = Modifier.padding(top = 16.dp),
