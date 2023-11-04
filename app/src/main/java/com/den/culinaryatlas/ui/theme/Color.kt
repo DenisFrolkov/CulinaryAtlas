@@ -12,5 +12,5 @@ val Pink40 = Color(0xFF7D5260)
 
 //My Colors
 val BasicOrange = Color(0xFFFDAC53)
-val SoftOrange = Color(0xFFFFF4F4)
+val SoftOrange = Color(0xFFFFF0DA)
 val Gray = Color(0x99979595)

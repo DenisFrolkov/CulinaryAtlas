@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
@@ -42,13 +43,7 @@ fun MyRecipeScreen(navController: NavController) {
         item {
             Text(
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 10.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        navController.navigate("view_recipe_screen")
-                    },
+                    .padding(top = 16.dp, bottom = 10.dp),
                 text = "Созданные рецепты",
                 fontSize = 14.sp,
                 fontFamily = montserrat_alternates_italic_font
@@ -62,9 +57,10 @@ fun MyRecipeScreen(navController: NavController) {
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        navController.navigate("view_recipe_screen")
+                        navController.navigate(NavigationRoute.ViewRecipeScreen.route)
                     }
                     .padding(bottom = 16.dp)
+                    .clip(shape = RoundedCornerShape(12.dp))
                     .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
             ) {
                 Row(
