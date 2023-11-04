@@ -49,14 +49,10 @@ fun CreatingFolderRecipeScreen(
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
-    TopBarCreatingFolder(
-        navController,
-        montserratAlternatesItalicFont,
-        photoUrl
-    )
+    CreatingFolder(navController, montserratAlternatesItalicFont, photoUrl)
 }
 @Composable
-fun TopBarCreatingFolder(
+fun CreatingFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter

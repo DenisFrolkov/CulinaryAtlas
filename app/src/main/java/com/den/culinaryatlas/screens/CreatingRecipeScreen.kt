@@ -50,11 +50,11 @@ fun CreatingRecipeScreen(
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl: Painter? = null
 
-    TopBarCreatingRecipe(navController, montserratAlternatesItalicFont, photoUrl)
+    CreatingRecipe(navController, montserratAlternatesItalicFont, photoUrl)
 }
 
 @Composable
-fun TopBarCreatingRecipe(
+fun CreatingRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter?
