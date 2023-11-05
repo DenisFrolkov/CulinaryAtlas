@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -35,15 +36,25 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 
-
 @Composable
 fun ViewRecipeScreen(
     navController: NavController
 ) {
-    val montserrat_alternates_italic_font = FontFamily(Font(R.font.montserrat_alternates_italic))
+    val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
-    var expanded by remember { mutableStateOf(false) }
     val items = listOf("Редактирова", "Удалить")
+    ViewRecipe(navController ,montserratAlternatesItalicFont, photoUrl, items)
+}
+
+@Composable
+fun ViewRecipe(
+    navController: NavController,
+    montserratAlternatesItalicFont: FontFamily,
+    photoUrl: Painter,
+    items: List<String>
+){
+    var expanded by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -99,11 +110,9 @@ fun ViewRecipeScreen(
                                     expanded = false
                                     when (item) {
                                         "Редактировать" -> {
-
                                         }
 
                                         "Удалить" -> {
-
                                         }
                                     }
                                 }
@@ -116,7 +125,7 @@ fun ViewRecipeScreen(
                                         text = item,
                                         fontSize = 18.sp,
                                         color = Color.Black,
-                                        fontFamily = montserrat_alternates_italic_font
+                                        fontFamily = montserratAlternatesItalicFont
                                     )
                                 }
                             }
@@ -124,81 +133,89 @@ fun ViewRecipeScreen(
                     }
                 }
             }
-            Text(
-                modifier = Modifier.padding(top = 16.dp),
-                text = "Пирог с вишней в духовке",
-                fontSize = 18.sp,
-                fontFamily = montserrat_alternates_italic_font
-            )
-            Box(
+            RecipeAction(montserratAlternatesItalicFont, photoUrl)
+        }
+    }
+}
+
+@Composable
+fun RecipeAction(
+    montserratAlternatesItalicFont: FontFamily,
+    photoUrl: Painter
+){
+    Text(
+        modifier = Modifier.padding(top = 16.dp),
+        text = "Пирог с вишней в духовке",
+        fontSize = 18.sp,
+        fontFamily = montserratAlternatesItalicFont
+    )
+    Box(
+        modifier = Modifier
+            .padding(top = 10.dp)
+    ) {
+        if (photoUrl != null) {
+            Image(
                 modifier = Modifier
-                    .padding(top = 10.dp)
-            ) {
-                if (photoUrl != null) {
-                    Image(
-                        modifier = Modifier
-                            .size(130.dp)
-                            .clip(RoundedCornerShape(12.dp)),
-                        painter = photoUrl,
-                        contentDescription = "Фото готового блюда"
-                    )
-                } else {
-                    Image(
-                        modifier = Modifier
-                            .size(130.dp)
-                            .clip(RoundedCornerShape(12.dp)),
-                        painter = painterResource(id = R.drawable.recipe_image),
-                        contentDescription = "Заменяющее изображение"
-                    )
-                }
-            }
-            Text(
-                modifier = Modifier.padding(top = 16.dp),
-                text = "Ингредиенты",
-                fontSize = 18.sp,
-                fontFamily = montserrat_alternates_italic_font
+                    .size(130.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                painter = photoUrl,
+                contentDescription = "Фото готового блюда"
             )
-            Box(
+        } else {
+            Image(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 10.dp, end = 16.dp)
-                    .height(66.dp)
-                    .border(.3.dp, Color.Black, RoundedCornerShape(12.dp))
-            ) {
-                Text(
-                    modifier = Modifier.padding(10.dp),
-                    text = "Вишня, вода, мука, желание",
-                    fontSize = 14.sp,
-                    fontFamily = montserrat_alternates_italic_font
-                )
-            }
-            Text(
-                modifier = Modifier.padding(top = 16.dp),
-                text = "Действия",
-                fontSize = 18.sp,
-                fontFamily = montserrat_alternates_italic_font
+                    .size(130.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                painter = painterResource(id = R.drawable.recipe_image),
+                contentDescription = "Заменяющее изображение"
             )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 10.dp, end = 16.dp)
-                    .height(66.dp)
-                    .border(.3.dp, Color.Black, RoundedCornerShape(12.dp))
-            ) {
-                Row(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        text = "1",
-                        fontSize = 14.sp,
-                        fontFamily = montserrat_alternates_italic_font
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp),
-                        text = "Пригтовьте нужные ингридиенты",
-                        fontSize = 14.sp,
-                        fontFamily = montserrat_alternates_italic_font
-                    )
-                }
-            }
+        }
+    }
+    Text(
+        modifier = Modifier.padding(top = 16.dp),
+        text = "Ингредиенты",
+        fontSize = 18.sp,
+        fontFamily = montserratAlternatesItalicFont
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 10.dp, end = 16.dp)
+            .height(66.dp)
+            .border(.3.dp, Color.Black, RoundedCornerShape(12.dp))
+    ) {
+        Text(
+            modifier = Modifier.padding(10.dp),
+            text = "Вишня, вода, мука, желание",
+            fontSize = 14.sp,
+            fontFamily = montserratAlternatesItalicFont
+        )
+    }
+    Text(
+        modifier = Modifier.padding(top = 16.dp),
+        text = "Действия",
+        fontSize = 18.sp,
+        fontFamily = montserratAlternatesItalicFont
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 10.dp, end = 16.dp)
+            .height(66.dp)
+            .border(.3.dp, Color.Black, RoundedCornerShape(12.dp))
+    ) {
+        Row(modifier = Modifier.padding(10.dp)) {
+            Text(
+                text = "1",
+                fontSize = 14.sp,
+                fontFamily = montserratAlternatesItalicFont
+            )
+            Text(
+                modifier = Modifier.padding(start = 10.dp),
+                text = "Пригтовьте нужные ингридиенты",
+                fontSize = 14.sp,
+                fontFamily = montserratAlternatesItalicFont
+            )
         }
     }
 }

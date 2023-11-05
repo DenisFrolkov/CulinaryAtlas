@@ -49,10 +49,11 @@ fun CreatingFolderRecipeScreen(
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
-    CreatingFolder(navController, montserratAlternatesItalicFont, photoUrl)
+    CreatingFolderRecipe(navController, montserratAlternatesItalicFont, photoUrl)
 }
+
 @Composable
-fun CreatingFolder(
+fun CreatingFolderRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter
@@ -111,9 +112,9 @@ fun CreatingFolder(
                     fontSize = 14.sp,
                     fontFamily = montserratAlternatesItalicFont
                 )
-                AddRecipeCreateFolder(navController, montserratAlternatesItalicFont, photoUrl)
+                AddRecipe(navController, montserratAlternatesItalicFont, photoUrl)
 
-                AddRecipeSectionCreateFolder(navController, montserratAlternatesItalicFont, photoUrl)
+                AddRecipeSection(montserratAlternatesItalicFont, photoUrl)
 
                 SaveButtonCreatingFolder(montserratAlternatesItalicFont)
             }
@@ -123,7 +124,7 @@ fun CreatingFolder(
 }
 
 @Composable
-fun AddRecipeCreateFolder(
+fun AddRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter
@@ -227,8 +228,7 @@ fun SectionCreateFolder(
 }
 
 @Composable
-fun AddRecipeSectionCreateFolder(
-    navController: NavController,
+fun AddRecipeSection(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter
 ) {
@@ -299,7 +299,9 @@ fun AddRecipeSectionCreateFolder(
 }
 
 @Composable
-fun SaveButtonCreatingFolder(montserratAlternatesItalicFont: FontFamily) {
+fun SaveButtonCreatingFolder(
+    montserratAlternatesItalicFont: FontFamily
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

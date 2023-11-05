@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -34,16 +36,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.DataRecipe
+import com.den.culinaryatlas.data.Recipe
+import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun ViewFolderScreen(
     navController: NavController
 ) {
-    val montserrat_alternates_italic_font = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val photoUrl = painterResource(id = R.drawable.recipe_image)
+    val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
+    val data = DataRecipe()
+    val items = listOf("Редактировать", "Удалить")
+    ViewFolder(navController, montserratAlternatesItalicFont, items, data.recipes)
+}
+
+@Composable
+fun ViewFolder(
+    navController: NavController,
+    montserratAlternatesItalicFont: FontFamily,
+    items: List<String>,
+    recipes: List<Recipe>
+){
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("Редактирова", "Удалить")
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -65,12 +80,12 @@ fun ViewFolderScreen(
                         .size(26.dp)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
-                            indication = null
+                            indication = null,
                         ) {
                             navController.popBackStack()
                         },
                     painter = painterResource(id = R.drawable.back_screen_icon),
-                    contentDescription = "Вернуться напредыдуший экрна"
+                    contentDescription = "Вернуться на предыдуший экран",
                 )
                 Box(
                     contentAlignment = Alignment.TopEnd
@@ -100,10 +115,11 @@ fun ViewFolderScreen(
                                     expanded = false
                                     when (item) {
                                         "Редактировать" -> {
-
+                                            // Действие при выборе "Редактировать"
                                         }
-                                        "Удалить" -> {
 
+                                        "Удалить" -> {
+                                            // Действие при выборе "Удалить"
                                         }
                                     }
                                 }
@@ -116,7 +132,7 @@ fun ViewFolderScreen(
                                         text = item,
                                         fontSize = 18.sp,
                                         color = Color.Black,
-                                        fontFamily = montserrat_alternates_italic_font
+                                        fontFamily = montserratAlternatesItalicFont
                                     )
                                 }
                             }
@@ -124,51 +140,79 @@ fun ViewFolderScreen(
                     }
                 }
             }
-            Text(
-                modifier = Modifier.padding(top = 16.dp),
-                text = "Папка 1",
-                fontSize = 18.sp,
-                fontFamily = montserrat_alternates_italic_font
-            )
-            Box(
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                    .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
+                    .fillMaxSize()
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(SoftOrange)
-                        .padding(16.dp)
-                ) {
-                    if (photoUrl != null) {
-                        Image(
-                            modifier = Modifier
-                                .size(90.dp)
-                                .clip(RoundedCornerShape(12.dp)),
-                            painter = photoUrl,
-                            contentDescription = "Фото готового блюда"
-                        )
-                    } else {
-                        Image(
-                            modifier = Modifier
-                                .size(90.dp)
-                                .clip(RoundedCornerShape(12.dp)),
-                            painter = painterResource(id = R.drawable.recipe_image),
-                            contentDescription = "Заменяющее изображение"
+                item {
+                    Box(modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Text(
+                            modifier = Modifier.padding(top = 16.dp),
+                            text = "Папка 1",
+                            fontSize = 18.sp,
+                            fontFamily = montserratAlternatesItalicFont
                         )
                     }
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .align(Alignment.CenterVertically),
-                        fontSize = 14.sp,
-                        fontFamily = montserrat_alternates_italic_font,
-                        text = "Пирог с вишней в духовке"
-                    )
+                }
+                this.items(recipes) { recipe ->
+                    RecipeViewFolder(navController, montserratAlternatesItalicFont, recipe)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun RecipeViewFolder(
+    navController: NavController,
+    montserratAlternatesItalicFont: FontFamily,
+    recipe: Recipe
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                navController.navigate(NavigationRoute.ViewRecipeScreen.route)
+            }
+            .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = SoftOrange, shape = RoundedCornerShape(12.dp))
+                .padding(16.dp)
+        ) {
+            if (recipe.image != null) {
+                Image(
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(RoundedCornerShape(12.dp)),
+                    painter = recipe.image,
+                    contentDescription = "Фото готового блюда"
+                )
+            } else {
+                Image(
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(RoundedCornerShape(12.dp)),
+                    painter = painterResource(id = R.drawable.photo_space_image),
+                    contentDescription = "Заменяющее изображение"
+                )
+            }
+            Text(
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .align(Alignment.CenterVertically),
+                fontSize = 14.sp,
+                fontFamily = montserratAlternatesItalicFont,
+                text = recipe.title
+            )
         }
     }
 }

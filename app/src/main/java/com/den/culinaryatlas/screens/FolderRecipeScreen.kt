@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.DataRecipe
+import com.den.culinaryatlas.data.RecipeFolder
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
@@ -36,10 +38,11 @@ fun FolderRecipeScreen(
     navController: NavController
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
+    val data = DataRecipe()
     val folders = listOf(
-        RecipeFolder("Папка 1", 3),
-        RecipeFolder("Папка 1", 3),
-        RecipeFolder("Папка 1", 3)
+        RecipeFolder("Папка 1", data.recipes.size),
+        RecipeFolder("Папка 1", data.recipes.size),
+        RecipeFolder("Папка 1", data.recipes.size)
     )
     FolderRecipe(navController, montserratAlternatesItalicFont, folders)
 }
@@ -144,4 +147,3 @@ fun ItemFolderRecipe(
     }
 }
 
-data class RecipeFolder(val name: String, val recipeCount: Int)

@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import com.den.culinaryatlas.data.Recipe
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -29,16 +29,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.DataRecipe
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun MyRecipeScreen(navController: NavController) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val recipes = listOf(
-        Recipe(painterResource(id = R.drawable.recipe_image), "аврап"),
-        Recipe(null, "null"))
-    MyRecipe(navController, montserratAlternatesItalicFont, recipes)
+    val recipes = DataRecipe()
+
+    MyRecipe(navController, montserratAlternatesItalicFont, recipes.recipes)
 }
 
 @Composable
@@ -120,5 +120,3 @@ fun Recipe(
         }
     }
 }
-
-data class Recipe(val image: Painter?, val title: String)
