@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -36,8 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.data.DataRecipe
-import com.den.culinaryatlas.data.Recipe
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
@@ -46,17 +43,15 @@ fun ViewFolderScreen(
     navController: NavController
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val data = DataRecipe()
     val items = listOf("Редактировать", "Удалить")
-    ViewFolder(navController, montserratAlternatesItalicFont, items, data.recipes)
+    ViewFolder(navController, montserratAlternatesItalicFont, items)
 }
 
 @Composable
 fun ViewFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    items: List<String>,
-    recipes: List<Recipe>
+    items: List<String>
 ){
     var expanded by remember { mutableStateOf(false) }
     Box(
@@ -156,8 +151,8 @@ fun ViewFolder(
                         )
                     }
                 }
-                this.items(recipes) { recipe ->
-                    RecipeViewFolder(navController, montserratAlternatesItalicFont, recipe)
+                this.items(3) { recipe ->
+                    RecipeViewFolder(navController, montserratAlternatesItalicFont)
                 }
             }
         }
@@ -167,9 +162,9 @@ fun ViewFolder(
 @Composable
 fun RecipeViewFolder(
     navController: NavController,
-    montserratAlternatesItalicFont: FontFamily,
-    recipe: Recipe
+    montserratAlternatesItalicFont: FontFamily
 ) {
+    val imageURL = painterResource(id = R.drawable.recipe_image)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,12 +183,12 @@ fun RecipeViewFolder(
                 .background(color = SoftOrange, shape = RoundedCornerShape(12.dp))
                 .padding(16.dp)
         ) {
-            if (recipe.image != null) {
+            if (imageURL != null) {
                 Image(
                     modifier = Modifier
                         .size(90.dp)
                         .clip(RoundedCornerShape(12.dp)),
-                    painter = recipe.image,
+                    painter = imageURL,
                     contentDescription = "Фото готового блюда"
                 )
             } else {
@@ -211,7 +206,7 @@ fun RecipeViewFolder(
                     .align(Alignment.CenterVertically),
                 fontSize = 14.sp,
                 fontFamily = montserratAlternatesItalicFont,
-                text = recipe.title
+                text = "recipe.title"
             )
         }
     }

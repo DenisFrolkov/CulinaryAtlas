@@ -1,3 +1,5 @@
+@file:Suppress("NAME_SHADOWING", "DEPRECATION")
+
 package com.den.culinaryatlas.screens
 
 import androidx.compose.foundation.Image
@@ -34,7 +36,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.Recipe
+import com.den.culinaryatlas.data.RecipeEvent
 
 @Composable
 fun ViewRecipeScreen(
@@ -43,6 +49,8 @@ fun ViewRecipeScreen(
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
     val items = listOf("Редактирова", "Удалить")
+    val navController = rememberNavController()
+
     ViewRecipe(navController ,montserratAlternatesItalicFont, photoUrl, items)
 }
 
@@ -143,12 +151,12 @@ fun RecipeAction(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter
 ){
-    Text(
-        modifier = Modifier.padding(top = 16.dp),
-        text = "Пирог с вишней в духовке",
-        fontSize = 18.sp,
-        fontFamily = montserratAlternatesItalicFont
-    )
+        Text(
+            modifier = Modifier.padding(top = 16.dp),
+            text = "recipe.title",
+            fontSize = 18.sp,
+            fontFamily = montserratAlternatesItalicFont
+        )
     Box(
         modifier = Modifier
             .padding(top = 10.dp)

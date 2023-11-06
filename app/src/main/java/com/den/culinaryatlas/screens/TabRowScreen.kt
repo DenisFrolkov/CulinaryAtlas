@@ -26,23 +26,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.room.Room
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.RecipeDatabase
+import com.den.culinaryatlas.data.RecipeEvent
+import com.den.culinaryatlas.data.RecipeState
+import com.den.culinaryatlas.data.RecipeViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.tab_navigation.TabItem
 import com.den.culinaryatlas.ui.theme.BasicOrange
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabRowScreen(
-    navController: NavController
+    navController: NavController,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
 ) {
     val tabItems = listOf(
         TabItem.MyRecipeScreen,
         TabItem.FolderRecipeScreen
     )
     val pagerState = rememberPagerState { tabItems.size }
-    TabRowContent(navController, tabItems, pagerState)
+    TabRowContent(navController, tabItems, pagerState, state, onEvent)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -50,13 +59,15 @@ fun TabRowScreen(
 fun TabRowContent(
     navController: NavController,
     tabItems: List<TabItem>,
-    pagerState: PagerState
+    pagerState: PagerState,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         TabRowContent(pagerState, tabItems)
-        HorizontalPager(navController, pagerState)
+        HorizontalPager(navController, pagerState, state, onEvent)
     }
     FAB(navController)
 }
@@ -97,14 +108,19 @@ fun TabRowContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalPager(navController: NavController, pagerState: PagerState) {
+fun HorizontalPager(
+    navController: NavController,
+    pagerState: PagerState,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
+) {
     HorizontalPager(
         state = pagerState,
         modifier = Modifier.fillMaxSize()
     ) { index ->
         Box {
             when (index) {
-                0 -> MyRecipeScreen(navController)
+                0 -> MyRecipeScreen(navController, state, onEvent )
                 1 -> FolderRecipeScreen(navController)
             }
         }

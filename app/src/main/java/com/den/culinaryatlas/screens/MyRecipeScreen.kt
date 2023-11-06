@@ -14,38 +14,53 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import com.den.culinaryatlas.data.Recipe
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.data.DataRecipe
+import com.den.culinaryatlas.data.Recipe
+import com.den.culinaryatlas.data.RecipeEvent
+import com.den.culinaryatlas.data.RecipeState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
-fun MyRecipeScreen(navController: NavController) {
+fun MyRecipeScreen(
+    navController: NavController,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
+) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val recipes = DataRecipe()
+    val imageURL: Painter = painterResource(id = R.drawable.photo_space_image)
+    if (state.isAddingRecipe) {
+        CreatingRecipeScreen(navController, state = state, onEvent = onEvent)
+    }
 
-    MyRecipe(navController, montserratAlternatesItalicFont, recipes.recipes)
+    MyRecipe(navController, montserratAlternatesItalicFont, imageURL, state, onEvent)
 }
 
 @Composable
 fun MyRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    recipes: List<Recipe>
+    imageURL: Painter,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -61,8 +76,9 @@ fun MyRecipe(
                 fontFamily = montserratAlternatesItalicFont
             )
         }
-        this.items(recipes) { recipe ->
-            Recipe(navController, montserratAlternatesItalicFont, recipe)
+
+        items(state.recipes) { recipeItem ->
+            Recipe(navController, montserratAlternatesItalicFont, onEvent, imageURL, recipeItem, state)
         }
     }
 }
@@ -71,7 +87,10 @@ fun MyRecipe(
 fun Recipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    recipe: Recipe
+    onEvent: (RecipeEvent) -> Unit,
+    imageURL: Painter,
+    recipeItem: Recipe,
+    state: RecipeState
 ) {
     Box(
         modifier = Modifier
@@ -80,7 +99,11 @@ fun Recipe(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                navController.navigate(NavigationRoute.ViewRecipeScreen.route)
+                navController.navigate(NavigationRoute.ViewRecipeScreen.route + recipeItem) {
+                        launchSingleTop = true
+                        restoreState = true
+                        val args = bundleOf("recipeItem" to recipeItem)
+                    }
             }
             .padding(bottom = 16.dp)
             .clip(shape = RoundedCornerShape(12.dp))
@@ -92,12 +115,12 @@ fun Recipe(
                 .background(SoftOrange)
                 .padding(16.dp)
         ) {
-            if (recipe.image != null) {
+            if (imageURL != null) {
                 Image(
                     modifier = Modifier
                         .size(90.dp)
                         .clip(RoundedCornerShape(12.dp)),
-                    painter = recipe.image,
+                    painter = painterResource(id = R.drawable.recipe_image),
                     contentDescription = "Фото готового блюда"
                 )
             } else {
@@ -115,8 +138,17 @@ fun Recipe(
                     .align(Alignment.CenterVertically),
                 fontSize = 14.sp,
                 fontFamily = montserratAlternatesItalicFont,
-                text = recipe.title
+                text = recipeItem.title
             )
+            Box(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        onEvent(RecipeEvent.DeleteRecipe(recipeItem))
+                    }
+            ) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "в")
+            }
         }
     }
 }

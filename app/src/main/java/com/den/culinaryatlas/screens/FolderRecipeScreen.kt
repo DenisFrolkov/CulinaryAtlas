@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.data.DataRecipe
-import com.den.culinaryatlas.data.RecipeFolder
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
@@ -38,16 +35,10 @@ fun FolderRecipeScreen(
     navController: NavController
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val data = DataRecipe()
-    val folders = listOf(
-        RecipeFolder("Папка 1", data.recipes.size),
-        RecipeFolder("Папка 1", data.recipes.size),
-        RecipeFolder("Папка 1", data.recipes.size)
-    )
-    FolderRecipe(navController, montserratAlternatesItalicFont, folders)
+    FolderRecipe(navController, montserratAlternatesItalicFont)
 }
 @Composable
-fun FolderRecipe(navController: NavController, montserratAlternatesItalicFont: FontFamily, folders: List<RecipeFolder>){
+fun FolderRecipe(navController: NavController, montserratAlternatesItalicFont: FontFamily){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,14 +47,16 @@ fun FolderRecipe(navController: NavController, montserratAlternatesItalicFont: F
         CreatingFolderFolderRecipe(
             navController, montserratAlternatesItalicFont
         )
-        Text(
-            text = "Созданные папки",
-            fontSize = 14.sp,
-            fontFamily = montserratAlternatesItalicFont
-        )
         LazyColumn {
-            this.items(folders) { folder ->
-                ItemFolderRecipe(navController, montserratAlternatesItalicFont, folder)
+                item {
+                    Text(
+                        text = "Созданные папки",
+                        fontSize = 14.sp,
+                        fontFamily = montserratAlternatesItalicFont
+                    )
+                }
+            items(3) {item ->
+                ItemFolderRecipe(navController, montserratAlternatesItalicFont)
             }
         }
     }
@@ -109,8 +102,7 @@ fun CreatingFolderFolderRecipe(
 @Composable
 fun ItemFolderRecipe(
     navController: NavController,
-    montserratAlternatesItalicFont: FontFamily,
-    folder: RecipeFolder
+    montserratAlternatesItalicFont: FontFamily
 ) {
     Box(
         modifier = Modifier
@@ -134,12 +126,12 @@ fun ItemFolderRecipe(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = folder.name,
+                text = "f",
                 fontSize = 18.sp,
                 fontFamily = montserratAlternatesItalicFont
             )
             Text(
-                text = folder.recipeCount.toString(),
+                text = "folder.recipeCount.toString()",
                 fontSize = 18.sp,
                 fontFamily = montserratAlternatesItalicFont
             )
