@@ -42,8 +42,10 @@ fun ViewRecipeScreen(
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
-    val items = listOf("Редактирова", "Удалить")
-    ViewRecipe(navController ,montserratAlternatesItalicFont, photoUrl, items)
+    val items = listOf("Редактировать", "Удалить")
+
+    ViewRecipe(navController, montserratAlternatesItalicFont, photoUrl, items)
+
 }
 
 @Composable
@@ -52,9 +54,8 @@ fun ViewRecipe(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter,
     items: List<String>
-){
+) {
     var expanded by remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -142,10 +143,10 @@ fun ViewRecipe(
 fun RecipeAction(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter
-){
+) {
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = "Пирог с вишней в духовке",
+        text = "Название рецепта",
         fontSize = 18.sp,
         fontFamily = montserratAlternatesItalicFont
     )

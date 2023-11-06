@@ -39,25 +39,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.RecipeEvent
+import com.den.culinaryatlas.data.RecipeState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun CreatingRecipeScreen(
-    navController: NavController
+    navController: NavController,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl: Painter? = null
 
-    CreatingRecipe(navController, montserratAlternatesItalicFont, photoUrl)
+    CreatingRecipe(navController, montserratAlternatesItalicFont, photoUrl, onEvent, state)
 }
 
 @Composable
 fun CreatingRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    photoUrl: Painter?
+    photoUrl: Painter?,
+    onEvent: (RecipeEvent) -> Unit,
+    state: RecipeState
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -128,7 +134,7 @@ fun CreatingRecipe(
                             fontFamily = montserratAlternatesItalicFont
                         )
 
-                        AddTitleCreatingRecipe(montserratAlternatesItalicFont)
+                        AddTitleCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
 
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
@@ -137,7 +143,7 @@ fun CreatingRecipe(
                             fontFamily = montserratAlternatesItalicFont
                         )
 
-                        AddIngredientCreatingRecipe(montserratAlternatesItalicFont)
+                        AddIngredientCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
 
                         Text(
                             modifier = Modifier
@@ -147,12 +153,12 @@ fun CreatingRecipe(
                             fontFamily = montserratAlternatesItalicFont
                         )
                     }
-                    items(6) { index ->
-                        ActionCreatingRecipe(index)
+                    items(1) { index ->
+                        AddActionCreatingRecipe(index, montserratAlternatesItalicFont, state, onEvent)
                     }
                     item {
                         AddActionCreatingRecipe()
-                        SaveButtonCreatingRecipe(montserratAlternatesItalicFont)
+                        SaveButtonCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
                     }
                 }
             }
@@ -184,7 +190,11 @@ fun ImageCreatingRecipe(photoUrl: Painter?) {
 }
 
 @Composable
-fun AddTitleCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
+fun AddTitleCreatingRecipe(
+    montserratAlternatesItalicFont: FontFamily,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
+) {
     var isBoxNameClicked by remember { mutableStateOf(false) }
     var nameText by remember { mutableStateOf("") }
     Box(
@@ -204,8 +214,10 @@ fun AddTitleCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
                     .padding(start = 10.dp, top = 16.dp)
                     .clip(shape = RoundedCornerShape(12.dp))
                     .background(color = Color.White, shape = RoundedCornerShape(12.dp)),
-                value = nameText,
-                onValueChange = { nameText = it },
+                value = state.title,
+                onValueChange = {
+                    onEvent(RecipeEvent.SetTitle(it))
+                },
                 textStyle = TextStyle(color = Color.Black),
             )
         } else {
@@ -231,7 +243,11 @@ fun AddTitleCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
 }
 
 @Composable
-fun AddIngredientCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
+fun AddIngredientCreatingRecipe(
+    montserratAlternatesItalicFont: FontFamily,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
+) {
     var isBoxIngredientClicked by remember { mutableStateOf(false) }
     var ingredientText by remember { mutableStateOf("") }
     Box(
@@ -251,8 +267,10 @@ fun AddIngredientCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
                     .align(Alignment.CenterStart)
                     .padding(start = 10.dp, top = 16.dp)
                     .background(color = Color.White),
-                value = ingredientText,
-                onValueChange = { ingredientText = it },
+                value = state.ingredient,
+                onValueChange = {
+                    onEvent(RecipeEvent.SetIngredient(it))
+                },
                 textStyle = TextStyle(color = Color.Black),
             )
         } else {
@@ -278,7 +296,12 @@ fun AddIngredientCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
 }
 
 @Composable
-fun ActionCreatingRecipe(index: Int) {
+fun AddActionCreatingRecipe(
+    index: Int,
+    montserratAlternatesItalicFont: FontFamily,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
+) {
     var isBoxActionClicked by remember { mutableStateOf(false) }
     var actionText by remember { mutableStateOf("") }
     Box(
@@ -294,12 +317,14 @@ fun ActionCreatingRecipe(index: Int) {
             BasicTextField(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
                     .align(Alignment.CenterStart)
                     .padding(start = 10.dp, top = 16.dp)
-                    .background(Color.White, RoundedCornerShape(12.dp)),
-                value = actionText,
-                onValueChange = { actionText = it },
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(color = Color.White, shape = RoundedCornerShape(12.dp)),
+                value = state.action,
+                onValueChange = {
+                    onEvent(RecipeEvent.SetAction(it))
+                },
                 textStyle = TextStyle(color = Color.Black),
             )
         } else {
@@ -317,7 +342,8 @@ fun ActionCreatingRecipe(index: Int) {
                         .align(Alignment.CenterStart)
                         .padding(start = 10.dp),
                     text = "Действие ${index + 1}",
-                    color = Color.Gray
+                    color = Color.Gray,
+                    fontFamily = montserratAlternatesItalicFont
                 )
             }
         }
@@ -372,7 +398,11 @@ fun AddActionCreatingRecipe() {
 }
 
 @Composable
-fun SaveButtonCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
+fun SaveButtonCreatingRecipe(
+    montserratAlternatesItalicFont: FontFamily,
+    state: RecipeState,
+    onEvent: (RecipeEvent) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -387,7 +417,7 @@ fun SaveButtonCreatingRecipe(montserratAlternatesItalicFont: FontFamily) {
                 .padding(start = 90.dp, end = 90.dp, bottom = 16.dp)
                 .height(40.dp),
             colors = ButtonDefaults.buttonColors(Color.White),
-            onClick = { }
+            onClick = { onEvent(RecipeEvent.SaveRecipe) }
         ) {
             androidx.compose.material3.Text(
                 text = "Сохранить",
