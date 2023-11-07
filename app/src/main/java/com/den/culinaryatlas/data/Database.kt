@@ -6,33 +6,38 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.den.culinaryatlas.data.folder.Folder
+import com.den.culinaryatlas.data.folder.FolderDao
+import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeDao
 
-val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+val MIGRATION_1_3: Migration = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
         // Выполните SQL-запрос для добавления нового столбца
         database.execSQL("ALTER TABLE recipe ADD COLUMN description TEXT")
     }
 }
 @Database(
-    entities = [Recipe::class],
-    version = 4,
+    entities = [Recipe::class, Folder::class],
+    version = 6,
     exportSchema = false
 )
-abstract class RecipeDatabase : RoomDatabase() {
+abstract class MainDatabase : RoomDatabase() {
     abstract val recipeDao: RecipeDao
+    abstract val folderDao: FolderDao
 
     companion object {
         @Volatile
-        private var INSTANCE: RecipeDatabase? = null
+        private var INSTANCE: MainDatabase? = null
 
-        fun getInstance(context: Context): RecipeDatabase {
+        fun getInstance(context: Context): MainDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    RecipeDatabase::class.java,
+                    MainDatabase::class.java,
                     "recipe_database"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_3)
                     .build()
                 INSTANCE = instance
                 instance

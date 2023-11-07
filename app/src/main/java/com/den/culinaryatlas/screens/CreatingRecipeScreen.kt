@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.data.RecipeEvent
-import com.den.culinaryatlas.data.RecipeState
+import com.den.culinaryatlas.data.recipe.RecipeEvent
+import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
@@ -158,7 +158,7 @@ fun CreatingRecipe(
                     }
                     item {
                         AddActionCreatingRecipe()
-                        SaveButtonCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
+                        SaveButtonCreatingRecipe(montserratAlternatesItalicFont, onEvent)
                     }
                 }
             }
@@ -196,7 +196,6 @@ fun AddTitleCreatingRecipe(
     onEvent: (RecipeEvent) -> Unit
 ) {
     var isBoxNameClicked by remember { mutableStateOf(false) }
-    var nameText by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -249,7 +248,6 @@ fun AddIngredientCreatingRecipe(
     onEvent: (RecipeEvent) -> Unit
 ) {
     var isBoxIngredientClicked by remember { mutableStateOf(false) }
-    var ingredientText by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -303,7 +301,6 @@ fun AddActionCreatingRecipe(
     onEvent: (RecipeEvent) -> Unit
 ) {
     var isBoxActionClicked by remember { mutableStateOf(false) }
-    var actionText by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -400,7 +397,6 @@ fun AddActionCreatingRecipe() {
 @Composable
 fun SaveButtonCreatingRecipe(
     montserratAlternatesItalicFont: FontFamily,
-    state: RecipeState,
     onEvent: (RecipeEvent) -> Unit
 ) {
     Box(

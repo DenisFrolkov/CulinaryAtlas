@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,25 +36,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeViewModel
 
 @Composable
 fun ViewRecipeScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: RecipeViewModel,
+    recipeId: String
 ) {
+    val recipe by produceState<Recipe?>(initialValue = null) {
+        val recipe = viewModel.getRecipeById(recipeId)
+        value = recipe
+    }
+
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
     val items = listOf("Редактировать", "Удалить")
 
-    ViewRecipe(navController, montserratAlternatesItalicFont, photoUrl, items)
-
+    recipe?.let {
+        ViewRecipe(navController, montserratAlternatesItalicFont, photoUrl, items, it)
+    }
 }
+
 
 @Composable
 fun ViewRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter,
-    items: List<String>
+    items: List<String>,
+    recipe: Recipe
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box(
@@ -134,7 +147,7 @@ fun ViewRecipe(
                     }
                 }
             }
-            RecipeAction(montserratAlternatesItalicFont, photoUrl)
+            RecipeAction(montserratAlternatesItalicFont, photoUrl, recipe)
         }
     }
 }
@@ -142,11 +155,12 @@ fun ViewRecipe(
 @Composable
 fun RecipeAction(
     montserratAlternatesItalicFont: FontFamily,
-    photoUrl: Painter
+    photoUrl: Painter,
+    recipe: Recipe
 ) {
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = "Название рецепта",
+        text = recipe.title,
         fontSize = 18.sp,
         fontFamily = montserratAlternatesItalicFont
     )
@@ -174,7 +188,7 @@ fun RecipeAction(
     }
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = "Ингредиенты",
+        text = recipe.ingredient,
         fontSize = 18.sp,
         fontFamily = montserratAlternatesItalicFont
     )
@@ -187,14 +201,14 @@ fun RecipeAction(
     ) {
         Text(
             modifier = Modifier.padding(10.dp),
-            text = "Вишня, вода, мука, желание",
+            text = recipe.ingredient,
             fontSize = 14.sp,
             fontFamily = montserratAlternatesItalicFont
         )
     }
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = "Действия",
+        text = recipe.action,
         fontSize = 18.sp,
         fontFamily = montserratAlternatesItalicFont
     )

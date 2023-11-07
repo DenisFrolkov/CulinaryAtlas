@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,19 +27,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.folder.Folder
+import com.den.culinaryatlas.data.folder.FolderEvent
+import com.den.culinaryatlas.data.folder.FolderState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun FolderRecipeScreen(
-    navController: NavController
+    navController: NavController,
+    state: FolderState,
+    onEvent: (FolderEvent) -> Unit
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    FolderRecipe(navController, montserratAlternatesItalicFont)
+    FolderRecipe(navController, montserratAlternatesItalicFont, state)
 }
 @Composable
-fun FolderRecipe(navController: NavController, montserratAlternatesItalicFont: FontFamily){
+fun FolderRecipe(
+    navController: NavController,
+    montserratAlternatesItalicFont: FontFamily,
+    state: FolderState
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,8 +65,8 @@ fun FolderRecipe(navController: NavController, montserratAlternatesItalicFont: F
                         fontFamily = montserratAlternatesItalicFont
                     )
                 }
-            items(3) {item ->
-                ItemFolderRecipe(navController, montserratAlternatesItalicFont)
+            items(state.folders) { folderItem ->
+                ItemFolderRecipe(navController, montserratAlternatesItalicFont, folderItem)
             }
         }
     }
@@ -102,7 +112,8 @@ fun CreatingFolderFolderRecipe(
 @Composable
 fun ItemFolderRecipe(
     navController: NavController,
-    montserratAlternatesItalicFont: FontFamily
+    montserratAlternatesItalicFont: FontFamily,
+    folderItem: Folder
 ) {
     Box(
         modifier = Modifier
@@ -126,12 +137,12 @@ fun ItemFolderRecipe(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "f",
+                text = folderItem.title,
                 fontSize = 18.sp,
                 fontFamily = montserratAlternatesItalicFont
             )
             Text(
-                text = "folder.recipeCount.toString()",
+                text = "folderItem.recipeQuantity",
                 fontSize = 18.sp,
                 fontFamily = montserratAlternatesItalicFont
             )

@@ -30,12 +30,11 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.data.Recipe
-import com.den.culinaryatlas.data.RecipeEvent
-import com.den.culinaryatlas.data.RecipeState
+import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeEvent
+import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
@@ -47,9 +46,6 @@ fun MyRecipeScreen(
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val imageURL: Painter = painterResource(id = R.drawable.photo_space_image)
-    if (state.isAddingRecipe) {
-        CreatingRecipeScreen(navController, state = state, onEvent = onEvent)
-    }
 
     MyRecipe(navController, montserratAlternatesItalicFont, imageURL, state, onEvent)
 }
@@ -79,7 +75,7 @@ fun MyRecipe(
         }
 
         items(state.recipes) { recipeItem ->
-            Recipe(navController, montserratAlternatesItalicFont, onEvent, imageURL, recipeItem, state)
+            Recipe(navController, montserratAlternatesItalicFont, onEvent, imageURL, recipeItem)
         }
     }
 }
@@ -90,8 +86,7 @@ fun Recipe(
     montserratAlternatesItalicFont: FontFamily,
     onEvent: (RecipeEvent) -> Unit,
     imageURL: Painter,
-    recipeItem: Recipe,
-    state: RecipeState,
+    recipeItem: Recipe
 ) {
     Box(
         modifier = Modifier
@@ -100,8 +95,7 @@ fun Recipe(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                val recipeId = recipeItem.RecipeId
-                navController.navigate(NavigationRoute.ViewRecipeScreen.route + "?recipeId=$recipeId")
+                navController.navigate(NavigationRoute.ViewRecipeScreen.route + "/${recipeItem.RecipeId}")
             }
             .padding(bottom = 16.dp)
             .clip(shape = RoundedCornerShape(12.dp))

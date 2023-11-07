@@ -1,4 +1,4 @@
-package com.den.culinaryatlas.data
+package com.den.culinaryatlas.data.recipe
 
 data class RecipeState(
     val recipes: List<Recipe> = emptyList(),
@@ -6,5 +6,5 @@ data class RecipeState(
     val ingredient: String = "",
     val action: String = "",
     val isAddingRecipe: Boolean = false,
-    val sortType: SortType = SortType.TITLE
+    val sortType: RecipeSortType = RecipeSortType.TITLE
 )

@@ -39,24 +39,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.folder.FolderEvent
+import com.den.culinaryatlas.data.folder.FolderState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun CreatingFolderRecipeScreen(
-    navController: NavController
+    navController: NavController,
+    state: FolderState,
+    onEvent: (FolderEvent) -> Unit
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
-    CreatingFolderRecipe(navController, montserratAlternatesItalicFont, photoUrl)
+    CreatingFolderRecipe(navController, montserratAlternatesItalicFont, photoUrl, onEvent, state)
 }
 
 @Composable
 fun CreatingFolderRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    photoUrl: Painter
+    photoUrl: Painter,
+    onEvent: (FolderEvent) -> Unit,
+    state: FolderState
 ) {
     Column(
         modifier = Modifier
@@ -104,7 +110,7 @@ fun CreatingFolderRecipe(
                     fontFamily = montserratAlternatesItalicFont
                 )
 
-                SectionCreateFolder(montserratAlternatesItalicFont)
+                SectionCreateFolder(montserratAlternatesItalicFont, onEvent, state)
 
                 Text(
                     modifier = Modifier.padding(top = 16.dp),
@@ -116,7 +122,7 @@ fun CreatingFolderRecipe(
 
                 AddRecipeSection(montserratAlternatesItalicFont, photoUrl)
 
-                SaveButtonCreatingFolder(montserratAlternatesItalicFont)
+                SaveButtonCreatingFolder(montserratAlternatesItalicFont, onEvent)
             }
 
         }
@@ -178,9 +184,10 @@ fun AddRecipe(
 
 @Composable
 fun SectionCreateFolder(
-    montserratAlternatesItalicFont: FontFamily
+    montserratAlternatesItalicFont: FontFamily,
+    onEvent: (FolderEvent) -> Unit,
+    state: FolderState
 ) {
-    var nameText by remember { mutableStateOf("") }
     var isBoxNameClicked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -201,8 +208,10 @@ fun SectionCreateFolder(
                         color = Color.White,
                         shape = RoundedCornerShape(12.dp)
                     ),
-                value = nameText,
-                onValueChange = { nameText = it },
+                value = state.title,
+                onValueChange = {
+                    onEvent(FolderEvent.SetTitle(it))
+                },
                 textStyle = TextStyle(color = Color.Black),
             )
         } else {
@@ -232,14 +241,14 @@ fun AddRecipeSection(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter
 ) {
-    var isBoxNameClicked by remember { mutableStateOf(false) }
+    var isBoxRecipeClicked by remember { mutableStateOf(false) }
     var isBoxAddRecipeClicked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, top = 16.dp, end = 16.dp)
             .height(90.dp)
-            .clickable { isBoxNameClicked = true }
+            .clickable { isBoxRecipeClicked = true }
             .background(Color.White, RoundedCornerShape(12.dp))
     ) {
         if (isBoxAddRecipeClicked) {
@@ -300,7 +309,8 @@ fun AddRecipeSection(
 
 @Composable
 fun SaveButtonCreatingFolder(
-    montserratAlternatesItalicFont: FontFamily
+    montserratAlternatesItalicFont: FontFamily,
+    onEvent: (FolderEvent) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -315,7 +325,7 @@ fun SaveButtonCreatingFolder(
                 .padding(start = 90.dp, end = 90.dp, bottom = 16.dp)
                 .height(40.dp),
             colors = ButtonDefaults.buttonColors(Color.White),
-            onClick = { }
+            onClick = { onEvent(FolderEvent.SaveFolder) }
         ) {
             Text(
                 text = "Сохранить",

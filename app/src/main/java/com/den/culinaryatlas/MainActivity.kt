@@ -9,19 +9,20 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import com.den.culinaryatlas.data.RecipeDatabase
-import com.den.culinaryatlas.data.RecipeViewModel
+import com.den.culinaryatlas.data.MainDatabase
+import com.den.culinaryatlas.data.folder.FolderViewModel
+import com.den.culinaryatlas.data.recipe.RecipeViewModel
 import com.den.culinaryatlas.navigation.Navigation
 
 class MainActivity : ComponentActivity() {
     private val db by lazy {
         Room.databaseBuilder(
             applicationContext,
-            RecipeDatabase::class.java,
+            MainDatabase::class.java,
             "recipes.db"
         ).build()
     }
-    private val viewModel by viewModels<RecipeViewModel>(
+    private val viewRecipeModel by viewModels<RecipeViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -31,11 +32,22 @@ class MainActivity : ComponentActivity() {
         }
     )
 
+    private val viewFolderModel by viewModels<FolderViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return FolderViewModel(db.folderDao) as T
+                }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val state by viewModel.state.collectAsState()
-            Navigation(state = state, onEvent = viewModel::onEvent)
+            val stateRecipe by viewRecipeModel.state.collectAsState()
+            val stateFolder by viewFolderModel.state.collectAsState()
+            Navigation(stateRecipe, viewRecipeModel::onRecipeEvent, stateFolder, viewFolderModel::onFolderEvent, viewRecipeModel)
         }
     }
 }

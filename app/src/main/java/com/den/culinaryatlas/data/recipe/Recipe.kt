@@ -1,4 +1,4 @@
-package com.den.culinaryatlas.data
+package com.den.culinaryatlas.data.recipe
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

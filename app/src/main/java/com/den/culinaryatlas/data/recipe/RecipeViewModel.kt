@@ -1,8 +1,8 @@
-package com.den.culinaryatlas.data
+package com.den.culinaryatlas.data.recipe
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,14 +11,15 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
-    private val _sortType = MutableStateFlow(SortType.TITLE)
+    private val _sortType = MutableStateFlow(RecipeSortType.TITLE)
     private val _recipes = _sortType
         .flatMapLatest { sortType ->
             when (sortType) {
-                SortType.TITLE -> recipeDao.getRecipesOrderedByLastTitle()
+                RecipeSortType.TITLE -> recipeDao.getRecipesOrderedByLastTitle()
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
@@ -30,7 +31,13 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RecipeState())
 
-    fun onEvent(event: RecipeEvent) {
+    suspend fun getRecipeById(RecipeId: String): Recipe {
+        return withContext(Dispatchers.IO) {
+            recipeDao.getRecipeById(RecipeId)
+        }
+    }
+
+    fun onRecipeEvent(event: RecipeEvent) {
         when (event) {
             is RecipeEvent.DeleteRecipe -> {
                 viewModelScope.launch {
@@ -43,7 +50,7 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                 val ingredient = state.value.ingredient
                 val action = state.value.action
 
-                if (title.isBlank()) return
+                if (title.isBlank() || ingredient.isBlank() || action.isBlank()) return
 
                 val recipe = Recipe(
                     title = title,
@@ -62,6 +69,7 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                     )
                 }
             }
+
 
             is RecipeEvent.SetTitle -> {
                 _state.update {
@@ -88,9 +96,8 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
             }
 
             is RecipeEvent.SortRecipes -> {
-                _sortType.value = event.sortType
+                _sortType.value = event.recipeSortType
             }
-
         }
     }
 }

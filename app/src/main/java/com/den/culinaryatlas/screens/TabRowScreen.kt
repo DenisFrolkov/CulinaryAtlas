@@ -26,14 +26,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.room.Room
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.data.RecipeDatabase
-import com.den.culinaryatlas.data.RecipeEvent
-import com.den.culinaryatlas.data.RecipeState
-import com.den.culinaryatlas.data.RecipeViewModel
+import com.den.culinaryatlas.data.folder.FolderEvent
+import com.den.culinaryatlas.data.folder.FolderState
+import com.den.culinaryatlas.data.recipe.RecipeEvent
+import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.tab_navigation.TabItem
 import com.den.culinaryatlas.ui.theme.BasicOrange
@@ -43,15 +41,17 @@ import com.den.culinaryatlas.ui.theme.BasicOrange
 @Composable
 fun TabRowScreen(
     navController: NavController,
-    state: RecipeState,
-    onEvent: (RecipeEvent) -> Unit
+    stateRecipeState: RecipeState,
+    onRecipeEvent: (RecipeEvent) -> Unit,
+    stateFolderState: FolderState,
+    onFolderEvent: (FolderEvent) -> Unit
 ) {
     val tabItems = listOf(
         TabItem.MyRecipeScreen,
         TabItem.FolderRecipeScreen
     )
     val pagerState = rememberPagerState { tabItems.size }
-    TabRowContent(navController, tabItems, pagerState, state, onEvent)
+    TabRowContent(navController, tabItems, pagerState, stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -60,14 +60,16 @@ fun TabRowContent(
     navController: NavController,
     tabItems: List<TabItem>,
     pagerState: PagerState,
-    state: RecipeState,
-    onEvent: (RecipeEvent) -> Unit
+    stateRecipeState: RecipeState,
+    onRecipeEvent: (RecipeEvent) -> Unit,
+    stateFolderState: FolderState,
+    onFolderEvent: (FolderEvent) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         TabRowContent(pagerState, tabItems)
-        HorizontalPager(navController, pagerState, state, onEvent)
+        MyHorizontalPager(navController, pagerState, stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent)
     }
     FAB(navController)
 }
@@ -108,11 +110,13 @@ fun TabRowContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalPager(
+fun MyHorizontalPager(
     navController: NavController,
     pagerState: PagerState,
-    state: RecipeState,
-    onEvent: (RecipeEvent) -> Unit
+    stateRecipeState: RecipeState,
+    onRecipeEvent: (RecipeEvent) -> Unit,
+    stateFolderState: FolderState,
+    onFolderEvent: (FolderEvent) -> Unit
 ) {
     HorizontalPager(
         state = pagerState,
@@ -120,8 +124,8 @@ fun HorizontalPager(
     ) { index ->
         Box {
             when (index) {
-                0 -> MyRecipeScreen(navController, state, onEvent )
-                1 -> FolderRecipeScreen(navController)
+                0 -> MyRecipeScreen(navController, stateRecipeState, onRecipeEvent )
+                1 -> FolderRecipeScreen(navController, stateFolderState, onFolderEvent)
             }
         }
     }
