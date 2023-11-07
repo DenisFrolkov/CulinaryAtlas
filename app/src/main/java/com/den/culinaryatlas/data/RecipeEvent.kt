@@ -7,5 +7,4 @@ sealed class RecipeEvent {
     data class SetAction(val action: String): RecipeEvent()
     data class SortRecipes(val sortType: SortType): RecipeEvent()
     data class DeleteRecipe(val recipe: Recipe): RecipeEvent()
-
 }

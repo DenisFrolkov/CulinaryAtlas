@@ -1,5 +1,3 @@
-@file:Suppress("NAME_SHADOWING", "DEPRECATION")
-
 package com.den.culinaryatlas.screens
 
 import androidx.compose.foundation.Image
@@ -36,11 +34,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.den.culinaryatlas.R
-import com.den.culinaryatlas.data.Recipe
-import com.den.culinaryatlas.data.RecipeEvent
 
 @Composable
 fun ViewRecipeScreen(
@@ -48,10 +42,10 @@ fun ViewRecipeScreen(
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val photoUrl = painterResource(id = R.drawable.recipe_image)
-    val items = listOf("Редактирова", "Удалить")
-    val navController = rememberNavController()
+    val items = listOf("Редактировать", "Удалить")
 
-    ViewRecipe(navController ,montserratAlternatesItalicFont, photoUrl, items)
+    ViewRecipe(navController, montserratAlternatesItalicFont, photoUrl, items)
+
 }
 
 @Composable
@@ -60,9 +54,8 @@ fun ViewRecipe(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter,
     items: List<String>
-){
+) {
     var expanded by remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -150,13 +143,13 @@ fun ViewRecipe(
 fun RecipeAction(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter
-){
-        Text(
-            modifier = Modifier.padding(top = 16.dp),
-            text = "recipe.title",
-            fontSize = 18.sp,
-            fontFamily = montserratAlternatesItalicFont
-        )
+) {
+    Text(
+        modifier = Modifier.padding(top = 16.dp),
+        text = "Название рецепта",
+        fontSize = 18.sp,
+        fontFamily = montserratAlternatesItalicFont
+    )
     Box(
         modifier = Modifier
             .padding(top = 10.dp)

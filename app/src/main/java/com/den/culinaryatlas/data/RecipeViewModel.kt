@@ -1,6 +1,7 @@
 package com.den.culinaryatlas.data
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,9 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RecipeViewModel(
-    private val recipeDao: RecipeDao
-) : ViewModel() {
+class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
     private val _sortType = MutableStateFlow(SortType.TITLE)
     private val _recipes = _sortType
         .flatMapLatest { sortType ->
@@ -95,3 +94,4 @@ class RecipeViewModel(
         }
     }
 }
+

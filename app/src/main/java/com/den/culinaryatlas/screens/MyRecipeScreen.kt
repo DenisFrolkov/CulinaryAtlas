@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.bundleOf
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.Recipe
@@ -61,6 +61,7 @@ fun MyRecipe(
     imageURL: Painter,
     state: RecipeState,
     onEvent: (RecipeEvent) -> Unit
+
 ) {
     LazyColumn(
         modifier = Modifier
@@ -90,7 +91,7 @@ fun Recipe(
     onEvent: (RecipeEvent) -> Unit,
     imageURL: Painter,
     recipeItem: Recipe,
-    state: RecipeState
+    state: RecipeState,
 ) {
     Box(
         modifier = Modifier
@@ -99,11 +100,8 @@ fun Recipe(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                navController.navigate(NavigationRoute.ViewRecipeScreen.route + recipeItem) {
-                        launchSingleTop = true
-                        restoreState = true
-                        val args = bundleOf("recipeItem" to recipeItem)
-                    }
+                val recipeId = recipeItem.RecipeId
+                navController.navigate(NavigationRoute.ViewRecipeScreen.route + "?recipeId=$recipeId")
             }
             .padding(bottom = 16.dp)
             .clip(shape = RoundedCornerShape(12.dp))

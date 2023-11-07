@@ -1,11 +1,12 @@
 package com.den.culinaryatlas.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.den.culinaryatlas.data.Recipe
+import com.den.culinaryatlas.data.RecipeDao
 import com.den.culinaryatlas.data.RecipeEvent
 import com.den.culinaryatlas.data.RecipeState
 import com.den.culinaryatlas.screens.CreatingFolderRecipeScreen
@@ -17,10 +18,9 @@ import com.den.culinaryatlas.screens.ViewRecipeScreen
 @Composable
 fun Navigation(
     state: RecipeState,
-    onEvent: (RecipeEvent) -> Unit,
+    onEvent: (RecipeEvent) -> Unit
 ) {
     val navController = rememberNavController()
-
 
     NavHost(navController = navController, startDestination = NavigationRoute.TabRowScreen.route) {
         composable(NavigationRoute.TabRowScreen.route) {
