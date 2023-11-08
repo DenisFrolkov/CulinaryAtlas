@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val stateRecipe by viewRecipeModel.state.collectAsState()
             val stateFolder by viewFolderModel.state.collectAsState()
-            Navigation(stateRecipe, viewRecipeModel::onRecipeEvent, stateFolder, viewFolderModel::onFolderEvent, viewRecipeModel)
+            Navigation(stateRecipe, viewRecipeModel::onRecipeEvent, stateFolder, viewFolderModel::onFolderEvent, viewRecipeModel, viewFolderModel)
         }
     }
 }

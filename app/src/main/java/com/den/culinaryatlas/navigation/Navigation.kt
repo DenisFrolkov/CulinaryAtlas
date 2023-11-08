@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.den.culinaryatlas.data.folder.FolderEvent
 import com.den.culinaryatlas.data.folder.FolderState
+import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe.RecipeViewModel
@@ -21,7 +22,8 @@ fun Navigation(
     onRecipeEvent: (RecipeEvent) -> Unit,
     stateFolderState: FolderState,
     onFolderEvent: (FolderEvent) -> Unit,
-    viewModel: RecipeViewModel
+    viewRecipeModel: RecipeViewModel,
+    viewFolderModel: FolderViewModel
 ) {
     val navController = rememberNavController()
 
@@ -33,12 +35,15 @@ fun Navigation(
             val arguments = backStackEntry.arguments
             val recipeId = arguments?.getString("recipeId")
             recipeId?.let {
-                ViewRecipeScreen(navController, viewModel, it)
+                ViewRecipeScreen(navController, viewRecipeModel, it)
             }
         }
-
-        composable(NavigationRoute.ViewFolderScreen.route) {
-            ViewFolderScreen(navController)
+        composable(NavigationRoute.ViewFolderScreen.route + "/{folderId}") { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val folderId = arguments?.getString("folderId")
+            folderId?.let {
+                ViewFolderScreen(navController, viewFolderModel, it)
+            }
         }
         composable(NavigationRoute.CreatingRecipeScreen.route) {
             CreatingRecipeScreen(navController, stateRecipeState, onRecipeEvent)

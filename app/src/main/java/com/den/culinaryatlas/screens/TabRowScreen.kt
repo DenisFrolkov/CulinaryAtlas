@@ -15,6 +15,8 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -145,7 +147,7 @@ fun FAB(navController: NavController) {
         ) {
             Icon(
                 modifier = Modifier.size(30.dp),
-                painter = painterResource(id = R.drawable.creating_recipe_icon),
+                imageVector = Icons.Default.Add,
                 contentDescription = "Создание рецепта"
             )
         }

@@ -22,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,23 +36,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
+import com.den.culinaryatlas.data.folder.Folder
+import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun ViewFolderScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: FolderViewModel,
+    folderId: String
 ) {
+    val folder by produceState<Folder?>(initialValue = null) {
+        val folder = viewModel.getFolderById(folderId)
+        value = folder
+    }
+
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val items = listOf("Редактировать", "Удалить")
-    ViewFolder(navController, montserratAlternatesItalicFont, items)
+    folder?.let {
+        ViewFolder(navController, montserratAlternatesItalicFont, items, it)
+    }
 }
 
 @Composable
 fun ViewFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    items: List<String>
+    items: List<String>,
+    folder: Folder
 ){
     var expanded by remember { mutableStateOf(false) }
     Box(
@@ -145,7 +158,7 @@ fun ViewFolder(
                     ){
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
-                            text = "Папка 1",
+                            text = folder.title,
                             fontSize = 18.sp,
                             fontFamily = montserratAlternatesItalicFont
                         )

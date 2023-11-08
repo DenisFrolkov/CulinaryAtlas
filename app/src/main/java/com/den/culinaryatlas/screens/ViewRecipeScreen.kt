@@ -188,7 +188,7 @@ fun RecipeAction(
     }
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = recipe.ingredient,
+        text = "Ингредиенты",
         fontSize = 18.sp,
         fontFamily = montserratAlternatesItalicFont
     )
@@ -208,7 +208,7 @@ fun RecipeAction(
     }
     Text(
         modifier = Modifier.padding(top = 16.dp),
-        text = recipe.action,
+        text = "Действия",
         fontSize = 18.sp,
         fontFamily = montserratAlternatesItalicFont
     )
@@ -227,7 +227,7 @@ fun RecipeAction(
             )
             Text(
                 modifier = Modifier.padding(start = 10.dp),
-                text = "Пригтовьте нужные ингридиенты",
+                text = recipe.action,
                 fontSize = 14.sp,
                 fontFamily = montserratAlternatesItalicFont
             )

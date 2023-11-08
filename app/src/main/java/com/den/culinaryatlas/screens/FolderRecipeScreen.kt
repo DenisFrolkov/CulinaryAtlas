@@ -124,7 +124,7 @@ fun ItemFolderRecipe(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                navController.navigate(NavigationRoute.ViewFolderScreen.route)
+                navController.navigate(NavigationRoute.ViewFolderScreen.route + "/${folderItem.FolderId}")
             }
             .background(SoftOrange, RoundedCornerShape(12.dp))
             .border(.1.dp, Gray, RoundedCornerShape(12.dp))

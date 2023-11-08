@@ -15,6 +15,9 @@ interface FolderDao {
     @Delete
     suspend fun deleteFolder(folder: Folder)
 
+    @Query("SELECT * FROM folder WHERE FolderId = :FolderId")
+    fun getFolderById(FolderId: String): Folder
+
     @Query("SELECT * FROM folder ORDER BY recipeQuantity DESC")
     fun getFoldersOrderedByLastTitle(): Flow<List<Folder>>
 }
