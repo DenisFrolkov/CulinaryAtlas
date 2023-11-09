@@ -31,9 +31,9 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RecipeState())
 
-    suspend fun getRecipeById(RecipeId: String): Recipe {
+    suspend fun getRecipeById(recipeId: String): Recipe {
         return withContext(Dispatchers.IO) {
-            recipeDao.getRecipeById(RecipeId)
+            recipeDao.getRecipeById(recipeId)
         }
     }
 
@@ -49,6 +49,7 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                 val title = state.value.title
                 val ingredient = state.value.ingredient
                 val action = state.value.action
+                val isAddingRecipe = state.value.isAddingRecipe
 
                 if (title.isBlank() || ingredient.isBlank() || action.isBlank()) return
 
@@ -56,6 +57,7 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                     title = title,
                     ingredient = ingredient,
                     action = action,
+                    isAddingRecipe = isAddingRecipe
                 )
                 viewModelScope.launch {
                     recipeDao.upsertRecipe(recipe)

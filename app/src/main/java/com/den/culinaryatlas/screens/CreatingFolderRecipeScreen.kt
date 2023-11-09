@@ -94,7 +94,7 @@ fun CreatingFolderRecipe(
             )
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp)
                     .background(
                         color = SoftOrange,
@@ -112,72 +112,8 @@ fun CreatingFolderRecipe(
 
                 SectionCreateFolder(montserratAlternatesItalicFont, onEvent, state)
 
-                Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = "Добавить рецепты",
-                    fontSize = 14.sp,
-                    fontFamily = montserratAlternatesItalicFont
-                )
-                AddRecipe(navController, montserratAlternatesItalicFont, photoUrl)
-
-                AddRecipeSection(montserratAlternatesItalicFont, photoUrl)
-
                 SaveButtonCreatingFolder(montserratAlternatesItalicFont, onEvent)
             }
-
-        }
-    }
-}
-
-@Composable
-fun AddRecipe(
-    navController: NavController,
-    montserratAlternatesItalicFont: FontFamily,
-    photoUrl: Painter
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, top = 10.dp, end = 16.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                navController.navigate(NavigationRoute.ViewRecipeScreen.route)
-            }
-            .background(Color.White, RoundedCornerShape(12.dp))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
-        ) {
-            if (photoUrl != null) {
-                Image(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .padding(start = 10.dp, top = 10.dp, bottom = 10.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    painter = photoUrl,
-                    contentDescription = "Фотография готового блюда"
-                )
-            } else {
-                Image(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    painter = painterResource(id = R.drawable.recipe_image),
-                    contentDescription = "Заменяющее изображение"
-                )
-            }
-            Text(
-                modifier = Modifier
-                    .padding(start = 12.dp)
-                    .align(Alignment.CenterVertically),
-                text = "Пирог с вишней в духовке",
-                fontSize = 14.sp,
-                fontFamily = montserratAlternatesItalicFont,
-            )
         }
     }
 }
@@ -237,92 +173,19 @@ fun SectionCreateFolder(
 }
 
 @Composable
-fun AddRecipeSection(
-    montserratAlternatesItalicFont: FontFamily,
-    photoUrl: Painter
-) {
-    var isBoxRecipeClicked by remember { mutableStateOf(false) }
-    var isBoxAddRecipeClicked by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-            .height(90.dp)
-            .clickable { isBoxRecipeClicked = true }
-            .background(Color.White, RoundedCornerShape(12.dp))
-    ) {
-        if (isBoxAddRecipeClicked) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
-            ) {
-                if (photoUrl != null) {
-                    Image(
-                        modifier = Modifier
-                            .size(90.dp)
-                            .padding(start = 10.dp, top = 10.dp, bottom = 10.dp)
-                            .clip(RoundedCornerShape(12.dp)),
-                        painter = photoUrl,
-                        contentDescription = "Фотография готового блюда"
-                    )
-                } else {
-                    Image(
-                        modifier = Modifier
-                            .size(90.dp)
-                            .clip(RoundedCornerShape(12.dp)),
-                        painter = painterResource(id = R.drawable.recipe_image),
-                        contentDescription = "Заменяющее изображение"
-                    )
-                }
-                Text(
-                    modifier = Modifier
-                        .padding(start = 12.dp)
-                        .align(Alignment.CenterVertically),
-                    text = "Пирог с вишней в духовке",
-                    fontSize = 14.sp,
-                    fontFamily = montserratAlternatesItalicFont,
-                )
-            }
-
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .align(Alignment.Center)
-                    .height(70.dp)
-                    .clickable { isBoxAddRecipeClicked = true }
-                    .border(1.5.dp, Gray, RoundedCornerShape(12.dp))
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    text = "Добавить рецепт",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun SaveButtonCreatingFolder(
     montserratAlternatesItalicFont: FontFamily,
     onEvent: (FolderEvent) -> Unit
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter
     ) {
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(start = 90.dp, end = 90.dp, bottom = 16.dp)
+                .padding(start = 90.dp, top = 16.dp, end = 90.dp, bottom = 16.dp)
                 .height(40.dp),
             colors = ButtonDefaults.buttonColors(Color.White),
             onClick = { onEvent(FolderEvent.SaveFolder) }

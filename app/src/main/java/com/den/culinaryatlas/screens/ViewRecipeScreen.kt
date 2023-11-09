@@ -37,13 +37,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe.RecipeViewModel
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
 
 @Composable
 fun ViewRecipeScreen(
     navController: NavController,
     viewModel: RecipeViewModel,
-    recipeId: String
+    stateRecipeInFolder: RecipeInFolderState,
+    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
+    recipeId: String,
+    stateRecipeState: RecipeState
 ) {
     val recipe by produceState<Recipe?>(initialValue = null) {
         val recipe = viewModel.getRecipeById(recipeId)

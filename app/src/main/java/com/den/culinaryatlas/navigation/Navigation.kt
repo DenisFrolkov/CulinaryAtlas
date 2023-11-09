@@ -10,6 +10,10 @@ import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe.RecipeViewModel
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderViewModel
+import com.den.culinaryatlas.screens.AddRecipeInFolderScreen
 import com.den.culinaryatlas.screens.CreatingFolderRecipeScreen
 import com.den.culinaryatlas.screens.CreatingRecipeScreen
 import com.den.culinaryatlas.screens.TabRowScreen
@@ -22,8 +26,11 @@ fun Navigation(
     onRecipeEvent: (RecipeEvent) -> Unit,
     stateFolderState: FolderState,
     onFolderEvent: (FolderEvent) -> Unit,
+    stateRecipeInFolder: RecipeInFolderState,
+    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
     viewRecipeModel: RecipeViewModel,
-    viewFolderModel: FolderViewModel
+    viewFolderModel: FolderViewModel,
+    recipeInFolderViewModel: RecipeInFolderViewModel
 ) {
     val navController = rememberNavController()
 
@@ -35,14 +42,14 @@ fun Navigation(
             val arguments = backStackEntry.arguments
             val recipeId = arguments?.getString("recipeId")
             recipeId?.let {
-                ViewRecipeScreen(navController, viewRecipeModel, it)
+                ViewRecipeScreen(navController, viewRecipeModel, stateRecipeInFolder, onRecipeInFolderEvent, it, stateRecipeState)
             }
         }
         composable(NavigationRoute.ViewFolderScreen.route + "/{folderId}") { backStackEntry ->
             val arguments = backStackEntry.arguments
             val folderId = arguments?.getString("folderId")
             folderId?.let {
-                ViewFolderScreen(navController, viewFolderModel, it)
+                ViewFolderScreen(navController, viewFolderModel, recipeInFolderViewModel, it, stateRecipeInFolder, onRecipeInFolderEvent, stateRecipeState)
             }
         }
         composable(NavigationRoute.CreatingRecipeScreen.route) {
@@ -50,6 +57,13 @@ fun Navigation(
         }
         composable(NavigationRoute.CreatingFolderRecipeScreen.route) {
             CreatingFolderRecipeScreen(navController, stateFolderState, onFolderEvent)
+        }
+        composable(NavigationRoute.AddRecipeInFolderScreen.route + "/{folderId}") { backStackEntry ->
+            val arguments = backStackEntry.arguments
+            val folderId = arguments?.getString("folderId")
+            folderId?.let {
+                AddRecipeInFolderScreen(navController, stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent, stateRecipeInFolder, onRecipeInFolderEvent, viewRecipeModel, viewFolderModel, recipeInFolderViewModel, it)
+            }
         }
     }
 }

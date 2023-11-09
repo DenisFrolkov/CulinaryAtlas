@@ -95,7 +95,7 @@ fun Recipe(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                navController.navigate(NavigationRoute.ViewRecipeScreen.route + "/${recipeItem.RecipeId}")
+                navController.navigate(NavigationRoute.ViewRecipeScreen.route + "/${recipeItem.recipeId}")
             }
             .padding(bottom = 16.dp)
             .clip(shape = RoundedCornerShape(12.dp))

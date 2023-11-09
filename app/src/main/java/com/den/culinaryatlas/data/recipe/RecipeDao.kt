@@ -14,8 +14,8 @@ interface RecipeDao {
     @Delete
     suspend fun deleteRecipe(recipe: Recipe)
 
-    @Query("SELECT * FROM recipe WHERE RecipeId = :RecipeId")
-    fun getRecipeById(RecipeId: String): Recipe
+    @Query("SELECT * FROM recipe WHERE RecipeId = :recipeId")
+    fun getRecipeById(recipeId: String): Recipe
 
     @Query("SELECT * FROM recipe ORDER BY title DESC")
     fun getRecipesOrderedByLastTitle(): Flow<List<Recipe>>

@@ -11,15 +11,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -38,35 +42,59 @@ import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.folder.Folder
 import com.den.culinaryatlas.data.folder.FolderViewModel
+import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeState
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolder
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
+import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun ViewFolderScreen(
     navController: NavController,
-    viewModel: FolderViewModel,
-    folderId: String
+    viewFolderModel: FolderViewModel,
+    viewRecipeInFolderViewModel: RecipeInFolderViewModel,
+    folderId: String,
+    stateRecipeInFolder: RecipeInFolderState,
+    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
+    stateRecipeState: RecipeState
 ) {
     val folder by produceState<Folder?>(initialValue = null) {
-        val folder = viewModel.getFolderById(folderId)
-        value = folder
+        value = viewFolderModel.getFolderById(folderId)
     }
 
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val items = listOf("Редактировать", "Удалить")
+
     folder?.let {
-        ViewFolder(navController, montserratAlternatesItalicFont, items, it)
+        ViewFolder(
+            navController,
+            montserratAlternatesItalicFont,
+            items,
+            it,
+            stateRecipeInFolder,
+            stateRecipeState,
+            viewRecipeInFolderViewModel
+        )
     }
 }
+
 
 @Composable
 fun ViewFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     items: List<String>,
-    folder: Folder
-){
+    folder: Folder,
+    stateRecipeInFolder: RecipeInFolderState,
+    stateRecipeState: RecipeState,
+    viewRecipeInFolderViewModel: RecipeInFolderViewModel
+) {
     var expanded by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -153,9 +181,10 @@ fun ViewFolder(
                     .fillMaxSize()
             ) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth(),
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
-                    ){
+                    ) {
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
                             text = folder.title,
@@ -163,9 +192,33 @@ fun ViewFolder(
                             fontFamily = montserratAlternatesItalicFont
                         )
                     }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 30.dp, top = 10.dp, bottom = 10.dp, end = 30.dp)
+                            .height(40.dp)
+                            .clickable { navController.navigate(NavigationRoute.AddRecipeInFolderScreen.route + "/${folder.FolderId}") }
+                            .border(1.5.dp, Gray, RoundedCornerShape(12.dp))
+                    ) {
+                        androidx.compose.material3.Text(
+                            modifier = Modifier
+                                .align(Alignment.Center),
+                            text = "Добавить рецепт",
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    }
                 }
-                this.items(3) { recipe ->
-                    RecipeViewFolder(navController, montserratAlternatesItalicFont)
+                this.items(stateRecipeInFolder.recipesInFolder) { stateRecipeInFolderItem ->
+                    this@LazyColumn.items(stateRecipeState.recipes) { stateRecipeState ->
+                        stateRecipeInFolderItem.recipeId = stateRecipeState.recipeId
+                        RecipeViewFolder(
+                            navController,
+                            montserratAlternatesItalicFont,
+                            stateRecipeInFolderItem,
+                            stateRecipeState
+                        )
+                    }
                 }
             }
         }
@@ -175,7 +228,9 @@ fun ViewFolder(
 @Composable
 fun RecipeViewFolder(
     navController: NavController,
-    montserratAlternatesItalicFont: FontFamily
+    montserratAlternatesItalicFont: FontFamily,
+    stateRecipeInFolderItem: RecipeInFolder,
+    stateRecipeState: Recipe
 ) {
     val imageURL = painterResource(id = R.drawable.recipe_image)
     Box(
@@ -219,7 +274,7 @@ fun RecipeViewFolder(
                     .align(Alignment.CenterVertically),
                 fontSize = 14.sp,
                 fontFamily = montserratAlternatesItalicFont,
-                text = "recipe.title"
+                text = stateRecipeState.title
             )
         }
     }

@@ -8,5 +8,5 @@ data class Folder(
     val title: String,
     val recipeQuantity: String,
     @PrimaryKey(autoGenerate = true)
-    val FolderId: Int? = null
+    val FolderId: Int = 0
 )
