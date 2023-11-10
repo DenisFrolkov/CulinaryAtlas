@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -41,15 +43,13 @@ import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe.RecipeViewModel
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
+import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun ViewRecipeScreen(
     navController: NavController,
     viewModel: RecipeViewModel,
-    stateRecipeInFolder: RecipeInFolderState,
-    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
-    recipeId: String,
-    stateRecipeState: RecipeState
+    recipeId: String
 ) {
     val recipe by produceState<Recipe?>(initialValue = null) {
         val recipe = viewModel.getRecipeById(recipeId)
@@ -78,7 +78,7 @@ fun ViewRecipe(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(SoftOrange)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -164,33 +164,25 @@ fun RecipeAction(
     photoUrl: Painter,
     recipe: Recipe
 ) {
-    Text(
-        modifier = Modifier.padding(top = 16.dp),
-        text = recipe.title,
-        fontSize = 18.sp,
-        fontFamily = montserratAlternatesItalicFont
-    )
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+        Text(
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
+            text = recipe.title,
+            fontSize = 18.sp,
+            fontFamily = montserratAlternatesItalicFont
+        )
+    }
     Box(
         modifier = Modifier
             .padding(top = 10.dp)
     ) {
-        if (photoUrl != null) {
-            Image(
-                modifier = Modifier
-                    .size(130.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                painter = photoUrl,
-                contentDescription = "Фото готового блюда"
-            )
-        } else {
-            Image(
-                modifier = Modifier
-                    .size(130.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                painter = painterResource(id = R.drawable.recipe_image),
-                contentDescription = "Заменяющее изображение"
-            )
-        }
+        Image(
+            modifier = Modifier
+                .size(130.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            painter = painterResource(id = R.drawable.photo_space_image),
+            contentDescription = "Заменяющее изображение"
+        )
     }
     Text(
         modifier = Modifier.padding(top = 16.dp),
@@ -202,18 +194,23 @@ fun RecipeAction(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, top = 10.dp, end = 16.dp)
-            .height(66.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(12.dp))
             .border(.3.dp, Color.Black, RoundedCornerShape(12.dp))
     ) {
         Text(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier
+                .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 10.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+                .fillMaxWidth(),
             text = recipe.ingredient,
             fontSize = 14.sp,
-            fontFamily = montserratAlternatesItalicFont
+            fontFamily = montserratAlternatesItalicFont,
+            maxLines = Int.MAX_VALUE,
+            overflow = TextOverflow.Clip
         )
     }
     Text(
-        modifier = Modifier.padding(top = 16.dp),
+        modifier = Modifier.padding(top = 10.dp),
         text = "Действия",
         fontSize = 18.sp,
         fontFamily = montserratAlternatesItalicFont
@@ -222,21 +219,18 @@ fun RecipeAction(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, top = 10.dp, end = 16.dp)
-            .height(66.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(12.dp))
             .border(.3.dp, Color.Black, RoundedCornerShape(12.dp))
     ) {
-        Row(modifier = Modifier.padding(10.dp)) {
-            Text(
-                text = "1",
-                fontSize = 14.sp,
-                fontFamily = montserratAlternatesItalicFont
-            )
-            Text(
-                modifier = Modifier.padding(start = 10.dp),
-                text = recipe.action,
-                fontSize = 14.sp,
-                fontFamily = montserratAlternatesItalicFont
-            )
-        }
+        Text(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 10.dp)
+                .fillMaxWidth(),
+            text = recipe.action,
+            fontSize = 14.sp,
+            fontFamily = montserratAlternatesItalicFont,
+            maxLines = Int.MAX_VALUE,
+            overflow = TextOverflow.Clip
+        )
     }
 }

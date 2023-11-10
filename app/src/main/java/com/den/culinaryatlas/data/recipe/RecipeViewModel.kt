@@ -49,22 +49,18 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                 val title = state.value.title
                 val ingredient = state.value.ingredient
                 val action = state.value.action
-                val isAddingRecipe = state.value.isAddingRecipe
-
                 if (title.isBlank() || ingredient.isBlank() || action.isBlank()) return
 
                 val recipe = Recipe(
                     title = title,
                     ingredient = ingredient,
-                    action = action,
-                    isAddingRecipe = isAddingRecipe
+                    action = action
                 )
                 viewModelScope.launch {
                     recipeDao.upsertRecipe(recipe)
                 }
                 _state.update {
                     it.copy(
-                        isAddingRecipe = false,
                         title = "",
                         ingredient = "",
                         action = ""

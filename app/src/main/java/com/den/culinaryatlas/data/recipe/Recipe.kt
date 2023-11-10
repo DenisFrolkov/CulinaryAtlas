@@ -8,7 +8,6 @@ data class Recipe(
     val title: String,
     val ingredient: String,
     val action: String,
-    val isAddingRecipe: Boolean,
     @PrimaryKey(autoGenerate = true)
     val recipeId: Int = 0
 )

@@ -42,14 +42,14 @@ fun Navigation(
             val arguments = backStackEntry.arguments
             val recipeId = arguments?.getString("recipeId")
             recipeId?.let {
-                ViewRecipeScreen(navController, viewRecipeModel, stateRecipeInFolder, onRecipeInFolderEvent, it, stateRecipeState)
+                ViewRecipeScreen(navController, viewRecipeModel, it)
             }
         }
         composable(NavigationRoute.ViewFolderScreen.route + "/{folderId}") { backStackEntry ->
             val arguments = backStackEntry.arguments
             val folderId = arguments?.getString("folderId")
             folderId?.let {
-                ViewFolderScreen(navController, viewFolderModel, recipeInFolderViewModel, it, stateRecipeInFolder, onRecipeInFolderEvent, stateRecipeState)
+                ViewFolderScreen(navController, viewFolderModel, it, stateRecipeInFolder, stateRecipeState)
             }
         }
         composable(NavigationRoute.CreatingRecipeScreen.route) {
@@ -62,7 +62,7 @@ fun Navigation(
             val arguments = backStackEntry.arguments
             val folderId = arguments?.getString("folderId")
             folderId?.let {
-                AddRecipeInFolderScreen(navController, stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent, stateRecipeInFolder, onRecipeInFolderEvent, viewRecipeModel, viewFolderModel, recipeInFolderViewModel, it)
+                AddRecipeInFolderScreen(navController, stateRecipeState,  onRecipeInFolderEvent, viewFolderModel, it)
             }
         }
     }

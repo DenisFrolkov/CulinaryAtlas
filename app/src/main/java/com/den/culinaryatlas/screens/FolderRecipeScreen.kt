@@ -37,8 +37,7 @@ import com.den.culinaryatlas.ui.theme.SoftOrange
 @Composable
 fun FolderRecipeScreen(
     navController: NavController,
-    state: FolderState,
-    onEvent: (FolderEvent) -> Unit
+    state: FolderState
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     FolderRecipe(navController, montserratAlternatesItalicFont, state)
@@ -54,9 +53,7 @@ fun FolderRecipe(
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp)
     ) {
-        CreatingFolderFolderRecipe(
-            navController, montserratAlternatesItalicFont
-        )
+        CreatingFolderFolderRecipe( navController, montserratAlternatesItalicFont )
         LazyColumn {
                 item {
                     Text(
@@ -82,6 +79,7 @@ fun CreatingFolderFolderRecipe(
             .fillMaxWidth()
             .height(88.dp)
             .padding(16.dp)
+            .background(SoftOrange, RoundedCornerShape(12.dp))
             .border(.1.dp, Color.Black, RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
@@ -89,6 +87,7 @@ fun CreatingFolderFolderRecipe(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(6.dp)
+                .background(Color.White, RoundedCornerShape(12.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
@@ -99,7 +98,7 @@ fun CreatingFolderFolderRecipe(
         ) {
             Text(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
+                    .align(Alignment.Center)
                     .padding(10.dp),
                 text = "Создать папку",
                 fontSize = 14.sp,
@@ -142,7 +141,7 @@ fun ItemFolderRecipe(
                 fontFamily = montserratAlternatesItalicFont
             )
             Text(
-                text = "folderItem.recipeQuantity",
+                text = "Количество рецептов в папке",
                 fontSize = 18.sp,
                 fontFamily = montserratAlternatesItalicFont
             )

@@ -57,39 +57,24 @@ import com.den.culinaryatlas.ui.theme.SoftOrange
 fun AddRecipeInFolderScreen(
     navController: NavController,
     stateRecipeState: RecipeState,
-    onRecipeEvent: (RecipeEvent) -> Unit,
-    stateFolderState: FolderState,
-    onFolderEvent: (FolderEvent) -> Unit,
-    stateRecipeInFolder: RecipeInFolderState,
     onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
-    viewRecipeModel: RecipeViewModel,
     viewFolderModel: FolderViewModel,
-    recipeInFolderViewModel: RecipeInFolderViewModel,
     folder: String
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val imageURL: Painter = painterResource(id = R.drawable.photo_space_image)
 
-    val folder by produceState<Folder?>(initialValue = null) {
-        val folder = viewFolderModel.getFolderById(folder)
-        value = folder
+    val folderState by produceState<Folder?>(initialValue = null) {
+        val folderModel = viewFolderModel.getFolderById(folder)
+        value = folderModel
     }
 
-    folder?.let {
+    folderState?.let {
         AddRecipeInFolder(
             navController,
             montserratAlternatesItalicFont,
-            imageURL,
             stateRecipeState,
-            onRecipeEvent,
-            stateFolderState,
-            onFolderEvent,
-            stateRecipeInFolder,
             onRecipeInFolderEvent,
-            viewRecipeModel,
-            viewFolderModel,
-            recipeInFolderViewModel,
-            folder!!
+            folderState!!
         )
     }
 }
@@ -100,16 +85,8 @@ fun AddRecipeInFolderScreen(
 fun AddRecipeInFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    imageURL: Painter,
     stateRecipeState: RecipeState,
-    onRecipeEvent: (RecipeEvent) -> Unit,
-    stateFolderState: FolderState,
-    onFolderEvent: (FolderEvent) -> Unit,
-    stateRecipeInFolder: RecipeInFolderState,
     onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
-    viewRecipeModel: RecipeViewModel,
-    viewFolderModel: FolderViewModel,
-    recipeInFolderViewModel: RecipeInFolderViewModel,
     folder: Folder
 ) {
     Column(
@@ -141,7 +118,7 @@ fun AddRecipeInFolder(
                 )
             }
             items(stateRecipeState.recipes) { recipeState ->
-                var click by remember { mutableStateOf(stateRecipeState.isAddingRecipe) }
+                var click by remember { mutableStateOf(false) }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -156,37 +133,26 @@ fun AddRecipeInFolder(
                         .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
                 ) {
                     if (click) onRecipeInFolderEvent(RecipeInFolderEvent.SetRecipeId(recipeState.recipeId)) else onRecipeInFolderEvent(RecipeInFolderEvent.SetRecipeId(0))
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.White)
                             .padding(16.dp)
                     ) {
-                        if (imageURL != null) {
-                            Image(
-                                modifier = Modifier
-                                    .size(90.dp)
-                                    .clip(RoundedCornerShape(12.dp)),
-                                painter = painterResource(id = R.drawable.recipe_image),
-                                contentDescription = "Фото готового блюда"
-                            )
-                        } else {
-                            Image(
-                                modifier = Modifier
-                                    .size(90.dp)
-                                    .clip(RoundedCornerShape(12.dp)),
-                                painter = painterResource(id = R.drawable.photo_space_image),
-                                contentDescription = "Заменяющее изображение"
-                            )
-                        }
+                        Image(
+                            modifier = Modifier
+                                .size(90.dp)
+                                .clip(RoundedCornerShape(12.dp)),
+                            painter = painterResource(id = R.drawable.photo_space_image),
+                            contentDescription = "Заменяющее изображение"
+                        )
                         Text(
                             modifier = Modifier
                                 .padding(start = 12.dp)
                                 .align(Alignment.CenterVertically),
                             fontSize = 14.sp,
                             fontFamily = montserratAlternatesItalicFont,
-                            text = recipeState.recipeId.toString()
+                            text = recipeState.title
                         )
                         if (click) {
                             Box(

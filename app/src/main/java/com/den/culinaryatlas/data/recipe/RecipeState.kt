@@ -5,6 +5,5 @@ data class RecipeState(
     val title: String = "",
     val ingredient: String = "",
     val action: String = "",
-    val isAddingRecipe: Boolean = true,
     val sortType: RecipeSortType = RecipeSortType.TITLE
 )

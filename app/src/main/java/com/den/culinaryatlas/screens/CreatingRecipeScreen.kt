@@ -21,6 +21,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -52,21 +55,34 @@ fun CreatingRecipeScreen(
     onEvent: (RecipeEvent) -> Unit
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val photoUrl: Painter? = null
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    CreatingRecipe(navController, montserratAlternatesItalicFont, photoUrl, onEvent, state)
+    CreatingRecipe(
+        navController,
+        montserratAlternatesItalicFont,
+        onEvent,
+        state,
+        keyboardController
+    )
 }
 
 @Composable
 fun CreatingRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    photoUrl: Painter?,
     onEvent: (RecipeEvent) -> Unit,
-    state: RecipeState
+    state: RecipeState,
+    keyboardController: SoftwareKeyboardController?
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                keyboardController?.hide()
+            },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -100,66 +116,62 @@ fun CreatingRecipe(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                LazyColumn(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    item {
-                        Text(
-                            modifier = Modifier
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    navController.navigate(NavigationRoute.ViewRecipeScreen.route)
-                                },
-                            text = "Создать рецепт",
-                            fontSize = 14.sp,
-                            fontFamily = montserratAlternatesItalicFont
-                        )
-                        Text(
-                            modifier = Modifier.padding(top = 16.dp),
-                            text = "Добавить фото готового рецепта",
-                            fontSize = 14.sp,
-                            fontFamily = montserratAlternatesItalicFont
-                        )
+                    Text(
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                navController.navigate(NavigationRoute.ViewRecipeScreen.route)
+                            },
+                        text = "Создать рецепт",
+                        fontSize = 14.sp,
+                        fontFamily = montserratAlternatesItalicFont
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = "Добавить фото готового рецепта",
+                        fontSize = 14.sp,
+                        fontFamily = montserratAlternatesItalicFont
+                    )
 
-                        ImageCreatingRecipe(photoUrl)
+                    ImageCreatingRecipe()
 
-                        Text(
-                            modifier = Modifier.padding(top = 16.dp),
-                            text = "Добавить название рецепта",
-                            fontSize = 14.sp,
-                            fontFamily = montserratAlternatesItalicFont
-                        )
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = "Добавить название рецепта",
+                        fontSize = 14.sp,
+                        fontFamily = montserratAlternatesItalicFont
+                    )
 
-                        AddTitleCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
+                    AddTitleCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
 
-                        Text(
-                            modifier = Modifier.padding(top = 16.dp),
-                            text = "Добавить нужный ингридиент",
-                            fontSize = 14.sp,
-                            fontFamily = montserratAlternatesItalicFont
-                        )
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = "Добавить нужный ингридиент",
+                        fontSize = 14.sp,
+                        fontFamily = montserratAlternatesItalicFont
+                    )
 
-                        AddIngredientCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
+                    AddIngredientCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
 
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 16.dp),
-                            text = "Добавить описание для действий",
-                            fontSize = 14.sp,
-                            fontFamily = montserratAlternatesItalicFont
-                        )
-                    }
-                    items(1) { index ->
-                        AddActionCreatingRecipe(index, montserratAlternatesItalicFont, state, onEvent)
-                    }
-                    item {
-                        AddActionCreatingRecipe()
-                        SaveButtonCreatingRecipe(montserratAlternatesItalicFont, onEvent)
-                    }
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 16.dp),
+                        text = "Добавить описание для действий",
+                        fontSize = 14.sp,
+                        fontFamily = montserratAlternatesItalicFont
+                    )
+
+                    AddActionCreatingRecipe( montserratAlternatesItalicFont, state, onEvent )
+
+                    SaveButtonCreatingRecipe(montserratAlternatesItalicFont, onEvent)
+
                 }
             }
         }
@@ -167,25 +179,15 @@ fun CreatingRecipe(
 }
 
 @Composable
-fun ImageCreatingRecipe(photoUrl: Painter?) {
+fun ImageCreatingRecipe() {
     Box(modifier = Modifier.padding(top = 10.dp)) {
-        if (photoUrl != null) {
-            Image(
-                modifier = Modifier
-                    .size(130.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                painter = photoUrl,
-                contentDescription = "Фото"
-            )
-        } else {
-            Image(
-                modifier = Modifier
-                    .size(130.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                painter = painterResource(id = R.drawable.photo_space_image),
-                contentDescription = "Заменяющее изображение"
-            )
-        }
+        Image(
+            modifier = Modifier
+                .size(130.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            painter = painterResource(id = R.drawable.photo_space_image),
+            contentDescription = "Заменяющее изображение"
+        )
     }
 }
 
@@ -195,49 +197,28 @@ fun AddTitleCreatingRecipe(
     state: RecipeState,
     onEvent: (RecipeEvent) -> Unit
 ) {
-    var isBoxNameClicked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, top = 10.dp, end = 16.dp)
             .height(48.dp)
-            .clickable { isBoxNameClicked = true }
             .clip(RoundedCornerShape(12.dp))
             .background(color = Color.White, shape = RoundedCornerShape(12.dp))
     ) {
-        if (isBoxNameClicked) {
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.CenterStart)
-                    .padding(start = 10.dp, top = 16.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(color = Color.White, shape = RoundedCornerShape(12.dp)),
-                value = state.title,
-                onValueChange = {
-                    onEvent(RecipeEvent.SetTitle(it))
-                },
-                textStyle = TextStyle(color = Color.Black),
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)
-                    .align(Alignment.Center)
-                    .height(32.dp)
-                    .clickable { isBoxNameClicked = true }
-                    .border(1.5.dp, Gray, RoundedCornerShape(6.dp))
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    fontFamily = montserratAlternatesItalicFont,
-                    text = "Добавить назание",
-                    color = Color.Gray
-                )
-            }
-        }
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp, top = 16.dp)
+                .background(color = Color.White),
+            value = state.title,
+            onValueChange = {
+                onEvent(RecipeEvent.SetTitle(it))
+            },
+            singleLine = true,
+            textStyle = TextStyle(color = Color.Black, fontFamily = montserratAlternatesItalicFont),
+        )
     }
 }
 
@@ -247,150 +228,57 @@ fun AddIngredientCreatingRecipe(
     state: RecipeState,
     onEvent: (RecipeEvent) -> Unit
 ) {
-    var isBoxIngredientClicked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 36.dp, top = 10.dp, end = 36.dp)
-            .height(58.dp)
-            .clickable { isBoxIngredientClicked = true }
+            .padding(start = 16.dp, top = 10.dp, end = 16.dp)
+            .height(80.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(color = Color.White)
     ) {
-        if (isBoxIngredientClicked) {
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
-                    .align(Alignment.CenterStart)
-                    .padding(start = 10.dp, top = 16.dp)
-                    .background(color = Color.White),
-                value = state.ingredient,
-                onValueChange = {
-                    onEvent(RecipeEvent.SetIngredient(it))
-                },
-                textStyle = TextStyle(color = Color.Black),
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)
-                    .align(Alignment.Center)
-                    .height(42.dp)
-                    .clickable { isBoxIngredientClicked = true }
-                    .border(1.5.dp, Gray, RoundedCornerShape(6.dp))
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    fontFamily = montserratAlternatesItalicFont,
-                    text = "Добавить ингридиент",
-                    color = Color.Gray
-                )
-            }
-        }
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp, top = 10.dp, end = 16.dp)
+                .background(color = Color.White),
+            value = state.ingredient,
+            onValueChange = {
+                onEvent(RecipeEvent.SetIngredient(it))
+            },
+            textStyle = TextStyle(color = Color.Black, lineHeight = 20.sp, fontFamily = montserratAlternatesItalicFont)
+        )
     }
 }
 
 @Composable
 fun AddActionCreatingRecipe(
-    index: Int,
     montserratAlternatesItalicFont: FontFamily,
     state: RecipeState,
     onEvent: (RecipeEvent) -> Unit
 ) {
-    var isBoxActionClicked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, top = 10.dp, end = 16.dp)
-            .height(48.dp)
-            .clickable { isBoxActionClicked = true }
+            .height(100.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White, RoundedCornerShape(12.dp))
+            .background(color = Color.White)
     ) {
-        if (isBoxActionClicked) {
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.CenterStart)
-                    .padding(start = 10.dp, top = 16.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(color = Color.White, shape = RoundedCornerShape(12.dp)),
-                value = state.action,
-                onValueChange = {
-                    onEvent(RecipeEvent.SetAction(it))
-                },
-                textStyle = TextStyle(color = Color.Black),
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)
-                    .align(Alignment.Center)
-                    .height(42.dp)
-                    .clickable { isBoxActionClicked = true }
-                    .border(1.5.dp, Gray, RoundedCornerShape(6.dp))
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 10.dp),
-                    text = "Действие ${index + 1}",
-                    color = Color.Gray,
-                    fontFamily = montserratAlternatesItalicFont
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AddActionCreatingRecipe() {
-    var isBoxAddActionClicked by remember { mutableStateOf(false) }
-    var addActionText by remember { mutableStateOf("") }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, top = 10.dp, end = 16.dp)
-            .height(48.dp)
-            .clickable { isBoxAddActionClicked = true }
-            .clip(RoundedCornerShape(12.dp))
-            .background(color = Color.White, shape = RoundedCornerShape(12.dp))
-    ) {
-        if (isBoxAddActionClicked) {
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
-                    .align(Alignment.CenterStart)
-                    .padding(start = 10.dp, top = 16.dp)
-                    .background(color = Color.White, shape = RoundedCornerShape(12.dp)),
-                value = addActionText,
-                onValueChange = { addActionText = it },
-                textStyle = TextStyle(color = Color.Black),
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)
-                    .align(Alignment.Center)
-                    .height(42.dp)
-                    .clickable { isBoxAddActionClicked = true }
-                    .border(1.5.dp, Gray, RoundedCornerShape(6.dp))
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 10.dp),
-                    text = "Добавить еще действий",
-                    color = Color.Gray
-                )
-            }
-        }
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp, top = 10.dp, end = 16.dp)
+                .background(color = Color.White),
+            value = state.action,
+            onValueChange = {
+                onEvent(RecipeEvent.SetAction(it))
+            },
+            textStyle = TextStyle(color = Color.Black, lineHeight = 20.sp, fontFamily = montserratAlternatesItalicFont),
+        )
     }
 }
 
@@ -413,7 +301,9 @@ fun SaveButtonCreatingRecipe(
                 .padding(start = 90.dp, end = 90.dp, bottom = 16.dp)
                 .height(40.dp),
             colors = ButtonDefaults.buttonColors(Color.White),
-            onClick = { onEvent(RecipeEvent.SaveRecipe) }
+            onClick = {
+                onEvent(RecipeEvent.SaveRecipe)
+            }
         ) {
             androidx.compose.material3.Text(
                 text = "Сохранить",

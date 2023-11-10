@@ -45,16 +45,13 @@ fun MyRecipeScreen(
     onEvent: (RecipeEvent) -> Unit
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val imageURL: Painter = painterResource(id = R.drawable.photo_space_image)
-
-    MyRecipe(navController, montserratAlternatesItalicFont, imageURL, state, onEvent)
+    MyRecipe(navController, montserratAlternatesItalicFont, state, onEvent)
 }
 
 @Composable
 fun MyRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    imageURL: Painter,
     state: RecipeState,
     onEvent: (RecipeEvent) -> Unit
 
@@ -75,7 +72,7 @@ fun MyRecipe(
         }
 
         items(state.recipes) { recipeItem ->
-            Recipe(navController, montserratAlternatesItalicFont, onEvent, imageURL, recipeItem)
+            Recipe(navController, montserratAlternatesItalicFont, onEvent, recipeItem)
         }
     }
 }
@@ -85,7 +82,6 @@ fun Recipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     onEvent: (RecipeEvent) -> Unit,
-    imageURL: Painter,
     recipeItem: Recipe
 ) {
     Box(
@@ -107,23 +103,13 @@ fun Recipe(
                 .background(SoftOrange)
                 .padding(16.dp)
         ) {
-            if (imageURL != null) {
-                Image(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    painter = painterResource(id = R.drawable.recipe_image),
-                    contentDescription = "Фото готового блюда"
-                )
-            } else {
-                Image(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    painter = painterResource(id = R.drawable.photo_space_image),
-                    contentDescription = "Заменяющее изображение"
-                )
-            }
+            Image(
+                modifier = Modifier
+                    .size(90.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                painter = painterResource(id = R.drawable.photo_space_image),
+                contentDescription = "Заменяющее изображение"
+            )
             Text(
                 modifier = Modifier
                     .padding(start = 12.dp)
@@ -132,15 +118,6 @@ fun Recipe(
                 fontFamily = montserratAlternatesItalicFont,
                 text = recipeItem.title
             )
-            Box(
-                modifier = Modifier
-                    .size(26.dp)
-                    .clickable {
-                        onEvent(RecipeEvent.DeleteRecipe(recipeItem))
-                    }
-            ) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "в")
-            }
         }
     }
 }

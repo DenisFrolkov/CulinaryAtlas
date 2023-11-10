@@ -56,10 +56,8 @@ import com.den.culinaryatlas.ui.theme.SoftOrange
 fun ViewFolderScreen(
     navController: NavController,
     viewFolderModel: FolderViewModel,
-    viewRecipeInFolderViewModel: RecipeInFolderViewModel,
     folderId: String,
     stateRecipeInFolder: RecipeInFolderState,
-    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
     stateRecipeState: RecipeState
 ) {
     val folder by produceState<Folder?>(initialValue = null) {
@@ -76,8 +74,7 @@ fun ViewFolderScreen(
             items,
             it,
             stateRecipeInFolder,
-            stateRecipeState,
-            viewRecipeInFolderViewModel
+            stateRecipeState
         )
     }
 }
@@ -90,11 +87,9 @@ fun ViewFolder(
     items: List<String>,
     folder: Folder,
     stateRecipeInFolder: RecipeInFolderState,
-    stateRecipeState: RecipeState,
-    viewRecipeInFolderViewModel: RecipeInFolderViewModel
+    stateRecipeState: RecipeState
 ) {
     var expanded by remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -209,27 +204,23 @@ fun ViewFolder(
                         )
                     }
                 }
-                this.items(stateRecipeInFolder.recipesInFolder) { stateRecipeInFolderItem ->
-                    this@LazyColumn.items(stateRecipeState.recipes) { stateRecipeState ->
-                        stateRecipeInFolderItem.recipeId = stateRecipeState.recipeId
-                        RecipeViewFolder(
-                            navController,
-                            montserratAlternatesItalicFont,
-                            stateRecipeInFolderItem,
-                            stateRecipeState
-                        )
-                    }
+                items(stateRecipeState.recipes) { stateRecipeState ->
+                    RecipeViewFolder(
+                        navController,
+                        montserratAlternatesItalicFont,
+                        stateRecipeState
+                    )
                 }
             }
         }
     }
 }
 
+
 @Composable
 fun RecipeViewFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    stateRecipeInFolderItem: RecipeInFolder,
     stateRecipeState: Recipe
 ) {
     val imageURL = painterResource(id = R.drawable.recipe_image)

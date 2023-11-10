@@ -127,7 +127,7 @@ fun MyHorizontalPager(
         Box {
             when (index) {
                 0 -> MyRecipeScreen(navController, stateRecipeState, onRecipeEvent )
-                1 -> FolderRecipeScreen(navController, stateFolderState, onFolderEvent)
+                1 -> FolderRecipeScreen(navController, stateFolderState)
             }
         }
     }

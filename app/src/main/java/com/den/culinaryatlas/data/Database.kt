@@ -21,7 +21,7 @@ val MIGRATION_1_8: Migration = object : Migration(1, 2) {
 }
 @Database(
     entities = [Recipe::class, Folder::class, RecipeInFolder::class],
-    version = 11,
+    version = 13,
     exportSchema = false
 )
 abstract class MainDatabase : RoomDatabase() {

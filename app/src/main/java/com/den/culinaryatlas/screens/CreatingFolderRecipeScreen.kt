@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -52,21 +54,26 @@ fun CreatingFolderRecipeScreen(
     onEvent: (FolderEvent) -> Unit
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    val photoUrl = painterResource(id = R.drawable.recipe_image)
-    CreatingFolderRecipe(navController, montserratAlternatesItalicFont, photoUrl, onEvent, state)
+    CreatingFolderRecipe(navController, montserratAlternatesItalicFont, onEvent, state)
 }
 
 @Composable
 fun CreatingFolderRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    photoUrl: Painter,
     onEvent: (FolderEvent) -> Unit,
     state: FolderState
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                keyboardController?.hide()
+            }
             .background(color = Color.White)
     ) {
         Icon(
@@ -110,7 +117,7 @@ fun CreatingFolderRecipe(
                     fontFamily = montserratAlternatesItalicFont
                 )
 
-                SectionCreateFolder(montserratAlternatesItalicFont, onEvent, state)
+                SectionCreateFolder(onEvent, state, keyboardController)
 
                 SaveButtonCreatingFolder(montserratAlternatesItalicFont, onEvent)
             }
@@ -120,57 +127,42 @@ fun CreatingFolderRecipe(
 
 @Composable
 fun SectionCreateFolder(
-    montserratAlternatesItalicFont: FontFamily,
     onEvent: (FolderEvent) -> Unit,
-    state: FolderState
+    state: FolderState,
+    keyboardController: SoftwareKeyboardController?
 ) {
-    var isBoxNameClicked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, top = 10.dp, end = 16.dp)
             .height(48.dp)
-            .clickable { isBoxNameClicked = true }
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                keyboardController?.hide()
+            }
             .background(Color.White, RoundedCornerShape(12.dp))
     ) {
-        if (isBoxNameClicked) {
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
-                    .align(Alignment.CenterStart)
-                    .padding(start = 10.dp, top = 16.dp)
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                value = state.title,
-                onValueChange = {
-                    onEvent(FolderEvent.SetTitle(it))
-                },
-                textStyle = TextStyle(color = Color.Black),
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)
-                    .align(Alignment.Center)
-                    .height(32.dp)
-                    .clickable { isBoxNameClicked = true }
-                    .border(1.5.dp, Gray, RoundedCornerShape(6.dp))
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    text = "Добавить назание",
-                    fontFamily = montserratAlternatesItalicFont,
-                    color = Color.Gray
-                )
-            }
-        }
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+                .align(Alignment.CenterStart)
+                .padding(start = 10.dp, top = 16.dp)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(12.dp)
+                ),
+            value = state.title,
+            onValueChange = {
+                onEvent(FolderEvent.SetTitle(it))
+            },
+            textStyle = TextStyle(color = Color.Black),
+        )
     }
 }
+
 
 @Composable
 fun SaveButtonCreatingFolder(
