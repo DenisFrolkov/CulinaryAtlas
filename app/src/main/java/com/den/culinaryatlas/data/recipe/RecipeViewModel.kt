@@ -37,6 +37,12 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
         }
     }
 
+    suspend fun updateRecipe(recipe: Recipe) {
+        withContext(Dispatchers.IO) {
+            recipeDao.updateRecipe(recipe)
+        }
+    }
+
     fun onRecipeEvent(event: RecipeEvent) {
         when (event) {
             is RecipeEvent.DeleteRecipe -> {
@@ -44,7 +50,6 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                     recipeDao.deleteRecipe(event.recipe)
                 }
             }
-
             RecipeEvent.SaveRecipe -> {
                 val title = state.value.title
                 val ingredient = state.value.ingredient
@@ -67,50 +72,6 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                     )
                 }
             }
-
-            is RecipeEvent.UpdateRecipes -> {
-                val recipeId = state.value.recipeId
-                val title = state.value.title
-                val ingredient = state.value.ingredient
-                val action = state.value.action
-
-                val recipe = Recipe(
-                    title = title,
-                    ingredient = ingredient,
-                    action = action,
-                    recipeId = recipeId
-                )
-
-                viewModelScope.launch {
-                    recipeDao.updateRecipe(recipe)
-                }
-
-                _state.update {
-                    it.copy(
-                        title = "",
-                        ingredient = "",
-                        action = ""
-                    )
-                }
-            }
-
-
-            is RecipeEvent.SetTitle -> {
-                _state.update {
-                    it.copy(
-                        title = event.title
-                    )
-                }
-            }
-
-            is RecipeEvent.SetIngredient -> {
-                _state.update {
-                    it.copy(
-                        ingredient = event.ingredient
-                    )
-                }
-            }
-
             is RecipeEvent.SetAction -> {
                 _state.update {
                     it.copy(
@@ -118,9 +79,29 @@ class RecipeViewModel(private val recipeDao: RecipeDao) : ViewModel() {
                     )
                 }
             }
-
+            is RecipeEvent.SetIngredient -> {
+                _state.update {
+                    it.copy(
+                        ingredient = event.ingredient
+                    )
+                }
+            }
+            is RecipeEvent.SetTitle -> {
+                _state.update {
+                    it.copy(
+                        title = event.title
+                    )
+                }
+            }
             is RecipeEvent.SortRecipes -> {
                 _sortType.value = event.recipeSortType
+            }
+
+            is RecipeEvent.UpdateRecipe -> {
+                val updatedRecipe = event.updatedRecipe
+                viewModelScope.launch {
+                    updateRecipe(updatedRecipe)
+                }
             }
         }
     }

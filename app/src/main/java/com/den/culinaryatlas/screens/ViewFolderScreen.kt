@@ -53,6 +53,10 @@ import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ViewFolderScreen(
@@ -92,136 +96,145 @@ fun ViewFolder(
     folder: Folder,
     stateRecipeInFolder: RecipeInFolderState,
     stateRecipeState: RecipeState,
-    onFolderEvent: (FolderEvent) -> Unit,
-
-    ) {
+    onFolderEvent: (FolderEvent) -> Unit
+) {
+    val myCoroutineScope = CoroutineScope(Dispatchers.IO)
+    var shouldClosePage by remember { mutableStateOf(true) }
     var expanded by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+    if (shouldClosePage) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
+                Row(
                     modifier = Modifier
-                        .size(26.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                        ) {
-                            navController.popBackStack()
-                        },
-                    painter = painterResource(id = R.drawable.back_screen_icon),
-                    contentDescription = "Вернуться на предыдуший экран",
-                )
-                Box(
-                    contentAlignment = Alignment.TopEnd
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Icon(
                         modifier = Modifier
                             .size(26.dp)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
-                                indication = null
+                                indication = null,
                             ) {
-                                expanded = true
+                                navController.popBackStack()
                             },
-                        painter = painterResource(id = R.drawable.edit_infomation_item),
-                        contentDescription = "Изменить информацию"
+                        painter = painterResource(id = R.drawable.back_screen_icon),
+                        contentDescription = "Вернуться на предыдуший экран",
                     )
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        modifier = Modifier
-                            .size(184.dp, 110.dp)
-                            .background(Color.White, RoundedCornerShape(12.dp))
+                    Box(
+                        contentAlignment = Alignment.TopEnd
                     ) {
-                        items.forEach { item ->
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded = false
-                                    when (item) {
-                                        "Редактировать" -> {
-                                            // Действие при выборе "Редактировать"
-                                        }
+                        Icon(
+                            modifier = Modifier
+                                .size(26.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    expanded = true
+                                },
+                            painter = painterResource(id = R.drawable.edit_infomation_item),
+                            contentDescription = "Изменить информацию"
+                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .size(184.dp, 110.dp)
+                                .background(Color.White, RoundedCornerShape(12.dp))
+                        ) {
+                            items.forEach { item ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        when (item) {
+                                            "Редактировать" -> {
+                                            }
 
-                                        "Удалить" -> {
-                                            navController.popBackStack()
+                                            "Удалить" -> {
+                                                myCoroutineScope.launch {
+                                                    onFolderEvent(FolderEvent.DeleteFolder(folder))
+                                                    withContext(Dispatchers.Main) {
+                                                        shouldClosePage = false
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            ) {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = item,
-                                        fontSize = 18.sp,
-                                        color = Color.Black,
-                                        fontFamily = montserratAlternatesItalicFont
-                                    )
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = item,
+                                            fontSize = 18.sp,
+                                            color = Color.Black,
+                                            fontFamily = montserratAlternatesItalicFont
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        LaunchedEffect(key1 = "Удалить") {
-                            onFolderEvent(FolderEvent.DeleteFolder(folder))
+                            LaunchedEffect(key1 = "Удалить") {
+                                onFolderEvent(FolderEvent.DeleteFolder(folder))
+                            }
                         }
                     }
                 }
-            }
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(top = 16.dp),
-                            text = folder.title,
-                            fontSize = 18.sp,
-                            fontFamily = montserratAlternatesItalicFont
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 30.dp, top = 10.dp, bottom = 10.dp, end = 30.dp)
-                            .height(40.dp)
-                            .clickable { navController.navigate(NavigationRoute.AddRecipeInFolderScreen.route + "/${folder.FolderId}") }
-                            .border(1.5.dp, Gray, RoundedCornerShape(12.dp))
-                    ) {
-                        androidx.compose.material3.Text(
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(top = 16.dp),
+                                text = folder.title,
+                                fontSize = 18.sp,
+                                fontFamily = montserratAlternatesItalicFont
+                            )
+                        }
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.Center),
-                            text = "Добавить рецепт",
-                            fontSize = 14.sp,
-                            color = Color.Gray
+                                .fillMaxWidth()
+                                .padding(start = 30.dp, top = 10.dp, bottom = 10.dp, end = 30.dp)
+                                .height(40.dp)
+                                .clickable { navController.navigate(NavigationRoute.AddRecipeInFolderScreen.route + "/${folder.FolderId}") }
+                                .border(1.5.dp, Gray, RoundedCornerShape(12.dp))
+                        ) {
+                            androidx.compose.material3.Text(
+                                modifier = Modifier
+                                    .align(Alignment.Center),
+                                text = "Добавить рецепт",
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+                    items(stateRecipeState.recipes) { stateRecipeState ->
+                        RecipeViewFolder(
+                            navController,
+                            montserratAlternatesItalicFont,
+                            stateRecipeState
                         )
                     }
-                }
-                items(stateRecipeState.recipes) { stateRecipeState ->
-                    RecipeViewFolder(
-                        navController,
-                        montserratAlternatesItalicFont,
-                        stateRecipeState
-                    )
                 }
             }
         }
+    } else {
+        navController.navigate(NavigationRoute.TabRowScreen.route)
     }
 }
 

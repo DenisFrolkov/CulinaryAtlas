@@ -30,9 +30,10 @@ class FolderViewModel(private val folderDao: FolderDao) : ViewModel() {
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), FolderState())
 
-    suspend fun getFolderById(FolderId: String): Folder {
+    suspend fun getFolderById(folderId: String): Folder {
         return withContext(Dispatchers.IO) {
-            folderDao.getFolderById(FolderId)
+            folderDao.getFolderById(folderId)
+
         }
     }
 

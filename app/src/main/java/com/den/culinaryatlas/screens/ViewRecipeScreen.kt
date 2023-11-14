@@ -9,18 +9,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.lifecycle.viewModelScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -37,16 +36,20 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.recipe.Recipe
 import com.den.culinaryatlas.data.recipe.RecipeEvent
-import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe.RecipeViewModel
-import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
-import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ViewRecipeScreen(
@@ -71,7 +74,8 @@ fun ViewRecipeScreen(
             photoUrl,
             items,
             onRecipeEvent,
-            it
+            it,
+            viewModel
         )
     }
 }
@@ -84,39 +88,30 @@ fun ViewRecipe(
     photoUrl: Painter,
     items: List<String>,
     onRecipeEvent: (RecipeEvent) -> Unit,
-    recipe: Recipe
+    recipe: Recipe,
+    viewModel: RecipeViewModel
 ) {
+    val myCoroutineScope = CoroutineScope(Dispatchers.IO)
+    var shouldClosePage by remember { mutableStateOf(true) }
     var expanded by remember { mutableStateOf(false) }
+
+    var showDialog by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(SoftOrange)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+        if (shouldClosePage) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
+                Row(
                     modifier = Modifier
-                        .size(26.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            navController.popBackStack()
-                        },
-                    painter = painterResource(id = R.drawable.back_screen_icon),
-                    contentDescription = "Вернуться напредыдуший экрна"
-                )
-                Box(
-                    contentAlignment = Alignment.TopEnd
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Icon(
                         modifier = Modifier
@@ -125,55 +120,159 @@ fun ViewRecipe(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
                             ) {
-                                expanded = true
+                                navController.popBackStack()
                             },
-                        painter = painterResource(id = R.drawable.edit_infomation_item),
-                        contentDescription = "Изменить информацию"
+                        painter = painterResource(id = R.drawable.back_screen_icon),
+                        contentDescription = "Вернуться напредыдуший экрна"
                     )
-                    DropdownMenu(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
+                    Box(
+                        contentAlignment = Alignment.TopEnd
                     ) {
-                        items.forEach { item ->
-                            androidx.compose.material.DropdownMenuItem(
-                                onClick = {
-                                    expanded = false
-                                    when (item) {
-                                        "Редактировать" -> {
-                                        }
+                        Icon(
+                            modifier = Modifier
+                                .size(26.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    expanded = true
+                                },
+                            painter = painterResource(id = R.drawable.edit_infomation_item),
+                            contentDescription = "Изменить информацию"
+                        )
+                        DropdownMenu(
+                            modifier = Modifier.fillMaxWidth(),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                        ) {
+                            items.forEachIndexed { index, item ->
+                                androidx.compose.material.DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        when (index) {
+                                            0 -> {
+                                                showDialog = true
+                                            }
 
-                                        "Удалить" -> {
-                                            navController.popBackStack()
-
+                                            1 -> {
+                                                myCoroutineScope.launch {
+                                                    onRecipeEvent(RecipeEvent.DeleteRecipe(recipe))
+                                                    withContext(Dispatchers.Main) {
+                                                        shouldClosePage = false
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            ) {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = item,
-                                        fontSize = 18.sp,
-                                        color = Color.Black,
-                                        fontFamily = montserratAlternatesItalicFont
-                                    )
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = item,
+                                            fontSize = 18.sp,
+                                            color = Color.Black,
+                                            fontFamily = montserratAlternatesItalicFont
+                                        )
+                                    }
                                 }
                             }
                         }
-                        LaunchedEffect("Удалить") {
-                            onRecipeEvent(RecipeEvent.DeleteRecipe(recipe))
-                        }
                     }
                 }
+                RecipeAction(montserratAlternatesItalicFont, photoUrl, recipe)
+                if (showDialog) {
+                    EditRecipeDialog(
+                        onDismiss = {
+                            showDialog = false
+                        },
+                        recipe = recipe,
+                        viewModel,
+                        onRecipeEvent
+                    )
+                }
             }
-            RecipeAction(montserratAlternatesItalicFont, photoUrl, recipe)
+        } else {
+            navController.navigate(NavigationRoute.TabRowScreen.route)
         }
     }
 }
+
+@Composable
+fun EditRecipeDialog(
+    onDismiss: () -> Unit,
+    recipe: Recipe,
+    RecipeViewModel: RecipeViewModel,
+    onRecipeEvent: (RecipeEvent) -> Unit
+) {
+
+    val myCoroutineScope = CoroutineScope(Dispatchers.IO)
+
+    var title by remember { mutableStateOf(recipe.title) }
+    var ingredient by remember { mutableStateOf(recipe.ingredient) }
+    var action by remember { mutableStateOf(recipe.action) }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Введите новое название") }
+            )
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                value = ingredient,
+                onValueChange = { ingredient = it },
+                label = { Text("Добавьте новые ингредиенты") }
+            )
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                value = action,
+                onValueChange = { action = it },
+                label = { Text("Опишите новые действия") }
+            )
+
+            Button(
+                onClick = {
+                    val updatedRecipe = Recipe(
+                        title = title,
+                        ingredient = ingredient,
+                        action = action,
+                        recipeId = recipe.recipeId
+                    )
+                    myCoroutineScope.launch {
+                        onRecipeEvent(RecipeEvent.UpdateRecipe(updatedRecipe))
+                        onDismiss()
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text("Сохранить")
+            }
+        }
+    }
+}
+
 
 @Composable
 fun RecipeAction(
