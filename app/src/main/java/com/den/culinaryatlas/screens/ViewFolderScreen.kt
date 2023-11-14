@@ -41,8 +41,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.folder.Folder
+import com.den.culinaryatlas.data.folder.FolderEvent
 import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolder
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
@@ -58,6 +60,7 @@ fun ViewFolderScreen(
     viewFolderModel: FolderViewModel,
     folderId: String,
     stateRecipeInFolder: RecipeInFolderState,
+    onFolderEvent: (FolderEvent) -> Unit,
     stateRecipeState: RecipeState
 ) {
     val folder by produceState<Folder?>(initialValue = null) {
@@ -74,7 +77,8 @@ fun ViewFolderScreen(
             items,
             it,
             stateRecipeInFolder,
-            stateRecipeState
+            stateRecipeState,
+            onFolderEvent
         )
     }
 }
@@ -87,8 +91,10 @@ fun ViewFolder(
     items: List<String>,
     folder: Folder,
     stateRecipeInFolder: RecipeInFolderState,
-    stateRecipeState: RecipeState
-) {
+    stateRecipeState: RecipeState,
+    onFolderEvent: (FolderEvent) -> Unit,
+
+    ) {
     var expanded by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
@@ -150,7 +156,7 @@ fun ViewFolder(
                                         }
 
                                         "Удалить" -> {
-                                            // Действие при выборе "Удалить"
+                                            navController.popBackStack()
                                         }
                                     }
                                 }
@@ -167,6 +173,9 @@ fun ViewFolder(
                                     )
                                 }
                             }
+                        }
+                        LaunchedEffect(key1 = "Удалить") {
+                            onFolderEvent(FolderEvent.DeleteFolder(folder))
                         }
                     }
                 }

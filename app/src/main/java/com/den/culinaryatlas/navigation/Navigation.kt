@@ -33,7 +33,6 @@ fun Navigation(
     recipeInFolderViewModel: RecipeInFolderViewModel
 ) {
     val navController = rememberNavController()
-
     NavHost(navController = navController, startDestination = NavigationRoute.TabRowScreen.route) {
         composable(NavigationRoute.TabRowScreen.route) {
             TabRowScreen(navController,stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent)
@@ -42,14 +41,14 @@ fun Navigation(
             val arguments = backStackEntry.arguments
             val recipeId = arguments?.getString("recipeId")
             recipeId?.let {
-                ViewRecipeScreen(navController, viewRecipeModel, it)
+                ViewRecipeScreen(navController, viewRecipeModel, onRecipeEvent, it)
             }
         }
         composable(NavigationRoute.ViewFolderScreen.route + "/{folderId}") { backStackEntry ->
             val arguments = backStackEntry.arguments
             val folderId = arguments?.getString("folderId")
             folderId?.let {
-                ViewFolderScreen(navController, viewFolderModel, it, stateRecipeInFolder, stateRecipeState)
+                ViewFolderScreen(navController, viewFolderModel, it, stateRecipeInFolder, onFolderEvent, stateRecipeState)
             }
         }
         composable(NavigationRoute.CreatingRecipeScreen.route) {

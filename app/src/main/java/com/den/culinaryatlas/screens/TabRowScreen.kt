@@ -22,6 +22,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +55,15 @@ fun TabRowScreen(
         TabItem.FolderRecipeScreen
     )
     val pagerState = rememberPagerState { tabItems.size }
-    TabRowContent(navController, tabItems, pagerState, stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent)
+    TabRowContent(
+        navController,
+        tabItems,
+        pagerState,
+        stateRecipeState,
+        onRecipeEvent,
+        stateFolderState,
+        onFolderEvent
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -71,7 +81,14 @@ fun TabRowContent(
         modifier = Modifier.fillMaxSize()
     ) {
         TabRowContent(pagerState, tabItems)
-        MyHorizontalPager(navController, pagerState, stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent)
+        MyHorizontalPager(
+            navController,
+            pagerState,
+            stateRecipeState,
+            onRecipeEvent,
+            stateFolderState,
+            onFolderEvent
+        )
     }
     FAB(navController)
 }
@@ -80,8 +97,9 @@ fun TabRowContent(
 @Composable
 fun TabRowContent(
     pagerState: PagerState,
-    tabItems: List<TabItem>) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    tabItems: List<TabItem>
+) {
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     LaunchedEffect(selectedTabIndex) { pagerState.animateScrollToPage(selectedTabIndex) }
     LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
         if (!pagerState.isScrollInProgress) selectedTabIndex = pagerState.currentPage
@@ -126,7 +144,7 @@ fun MyHorizontalPager(
     ) { index ->
         Box {
             when (index) {
-                0 -> MyRecipeScreen(navController, stateRecipeState, onRecipeEvent )
+                0 -> MyRecipeScreen(navController, stateRecipeState, onRecipeEvent)
                 1 -> FolderRecipeScreen(navController, stateFolderState)
             }
         }

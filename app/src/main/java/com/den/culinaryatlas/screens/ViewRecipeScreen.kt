@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.lifecycle.viewModelScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +20,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -39,16 +40,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe.RecipeViewModel
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
+import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
 fun ViewRecipeScreen(
     navController: NavController,
     viewModel: RecipeViewModel,
+    onRecipeEvent: (RecipeEvent) -> Unit,
     recipeId: String
 ) {
     val recipe by produceState<Recipe?>(initialValue = null) {
@@ -61,7 +65,14 @@ fun ViewRecipeScreen(
     val items = listOf("Редактировать", "Удалить")
 
     recipe?.let {
-        ViewRecipe(navController, montserratAlternatesItalicFont, photoUrl, items, it)
+        ViewRecipe(
+            navController,
+            montserratAlternatesItalicFont,
+            photoUrl,
+            items,
+            onRecipeEvent,
+            it
+        )
     }
 }
 
@@ -72,6 +83,7 @@ fun ViewRecipe(
     montserratAlternatesItalicFont: FontFamily,
     photoUrl: Painter,
     items: List<String>,
+    onRecipeEvent: (RecipeEvent) -> Unit,
     recipe: Recipe
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -120,7 +132,7 @@ fun ViewRecipe(
                     )
                     DropdownMenu(
                         modifier = Modifier
-                            .size(184.dp, 110.dp),
+                            .fillMaxWidth(),
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
                     ) {
@@ -133,6 +145,8 @@ fun ViewRecipe(
                                         }
 
                                         "Удалить" -> {
+                                            navController.popBackStack()
+
                                         }
                                     }
                                 }
@@ -150,6 +164,9 @@ fun ViewRecipe(
                                 }
                             }
                         }
+                        LaunchedEffect("Удалить") {
+                            onRecipeEvent(RecipeEvent.DeleteRecipe(recipe))
+                        }
                     }
                 }
             }
@@ -164,7 +181,7 @@ fun RecipeAction(
     photoUrl: Painter,
     recipe: Recipe
 ) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
             text = recipe.title,

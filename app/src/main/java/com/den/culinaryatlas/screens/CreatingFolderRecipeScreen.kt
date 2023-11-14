@@ -119,7 +119,7 @@ fun CreatingFolderRecipe(
 
                 SectionCreateFolder(onEvent, state, keyboardController)
 
-                SaveButtonCreatingFolder(montserratAlternatesItalicFont, onEvent)
+                SaveButtonCreatingFolder(navController, montserratAlternatesItalicFont, onEvent)
             }
         }
     }
@@ -166,6 +166,7 @@ fun SectionCreateFolder(
 
 @Composable
 fun SaveButtonCreatingFolder(
+    navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
     onEvent: (FolderEvent) -> Unit
 ) {
@@ -180,7 +181,10 @@ fun SaveButtonCreatingFolder(
                 .padding(start = 90.dp, top = 16.dp, end = 90.dp, bottom = 16.dp)
                 .height(40.dp),
             colors = ButtonDefaults.buttonColors(Color.White),
-            onClick = { onEvent(FolderEvent.SaveFolder) }
+            onClick = {
+                onEvent(FolderEvent.SaveFolder)
+                navController.popBackStack()
+            }
         ) {
             Text(
                 text = "Сохранить",

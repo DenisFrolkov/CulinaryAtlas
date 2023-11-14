@@ -3,6 +3,7 @@ package com.den.culinaryatlas.data.recipe
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -13,6 +14,9 @@ interface RecipeDao {
 
     @Delete
     suspend fun deleteRecipe(recipe: Recipe)
+
+    @Update
+    suspend fun updateRecipe(recipe: Recipe)
 
     @Query("SELECT * FROM recipe WHERE RecipeId = :recipeId")
     fun getRecipeById(recipeId: String): Recipe

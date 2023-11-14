@@ -104,35 +104,34 @@ fun CreatingRecipe(
                 contentDescription = "Вернутся на предыдущий экран"
             )
         }
+        Text(
+            modifier = Modifier
+                .padding(top = 10.dp)
+                .align(Alignment.CenterHorizontally),
+            text = "Создать рецепт",
+            fontSize = 18.sp,
+            fontFamily = montserratAlternatesItalicFont
+        )
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 16.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    keyboardController?.hide()
+                }
                 .background(
                     color = SoftOrange,
                     shape = RoundedCornerShape(16.dp)
                 )
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                navController.navigate(NavigationRoute.ViewRecipeScreen.route)
-                            },
-                        text = "Создать рецепт",
-                        fontSize = 14.sp,
-                        fontFamily = montserratAlternatesItalicFont
-                    )
+                item {
                     Text(
                         modifier = Modifier.padding(top = 16.dp),
                         text = "Добавить фото готового рецепта",
@@ -158,7 +157,11 @@ fun CreatingRecipe(
                         fontFamily = montserratAlternatesItalicFont
                     )
 
-                    AddIngredientCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
+                    AddIngredientCreatingRecipe(
+                        montserratAlternatesItalicFont,
+                        state,
+                        onEvent
+                    )
 
                     Text(
                         modifier = Modifier
@@ -168,15 +171,15 @@ fun CreatingRecipe(
                         fontFamily = montserratAlternatesItalicFont
                     )
 
-                    AddActionCreatingRecipe( montserratAlternatesItalicFont, state, onEvent )
+                    AddActionCreatingRecipe(montserratAlternatesItalicFont, state, onEvent)
 
-                    SaveButtonCreatingRecipe(montserratAlternatesItalicFont, onEvent)
-
+                    SaveButtonCreatingRecipe(montserratAlternatesItalicFont, onEvent, navController)
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun ImageCreatingRecipe() {
@@ -247,7 +250,11 @@ fun AddIngredientCreatingRecipe(
             onValueChange = {
                 onEvent(RecipeEvent.SetIngredient(it))
             },
-            textStyle = TextStyle(color = Color.Black, lineHeight = 20.sp, fontFamily = montserratAlternatesItalicFont)
+            textStyle = TextStyle(
+                color = Color.Black,
+                lineHeight = 20.sp,
+                fontFamily = montserratAlternatesItalicFont
+            )
         )
     }
 }
@@ -277,7 +284,11 @@ fun AddActionCreatingRecipe(
             onValueChange = {
                 onEvent(RecipeEvent.SetAction(it))
             },
-            textStyle = TextStyle(color = Color.Black, lineHeight = 20.sp, fontFamily = montserratAlternatesItalicFont),
+            textStyle = TextStyle(
+                color = Color.Black,
+                lineHeight = 20.sp,
+                fontFamily = montserratAlternatesItalicFont
+            ),
         )
     }
 }
@@ -285,14 +296,13 @@ fun AddActionCreatingRecipe(
 @Composable
 fun SaveButtonCreatingRecipe(
     montserratAlternatesItalicFont: FontFamily,
-    onEvent: (RecipeEvent) -> Unit
+    onEvent: (RecipeEvent) -> Unit,
+    navController: NavController
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
             .padding(top = 20.dp),
-        contentAlignment = Alignment.BottomCenter
     ) {
         Button(
             modifier = Modifier
@@ -303,6 +313,7 @@ fun SaveButtonCreatingRecipe(
             colors = ButtonDefaults.buttonColors(Color.White),
             onClick = {
                 onEvent(RecipeEvent.SaveRecipe)
+                navController.navigate(NavigationRoute.TabRowScreen.route)
             }
         ) {
             androidx.compose.material3.Text(
