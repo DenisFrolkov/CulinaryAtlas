@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +32,7 @@ import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.folder.Folder
 import com.den.culinaryatlas.data.folder.FolderEvent
 import com.den.culinaryatlas.data.folder.FolderState
+import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
@@ -37,16 +40,19 @@ import com.den.culinaryatlas.ui.theme.SoftOrange
 @Composable
 fun FolderRecipeScreen(
     navController: NavController,
-    state: FolderState
-) {
+    state: FolderState,
+    viewFolderModel: FolderViewModel,
+    ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
-    FolderRecipe(navController, montserratAlternatesItalicFont, state)
+    FolderRecipe(navController, montserratAlternatesItalicFont, state, viewFolderModel)
 }
 @Composable
 fun FolderRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    state: FolderState
+    state: FolderState,
+    viewFolderModel: FolderViewModel
+
 ){
     Column(
         modifier = Modifier
@@ -63,7 +69,7 @@ fun FolderRecipe(
                     )
                 }
             items(state.folders) { folderItem ->
-                ItemFolderRecipe(navController, montserratAlternatesItalicFont, folderItem)
+                ItemFolderRecipe(navController, montserratAlternatesItalicFont, folderItem, viewFolderModel)
             }
         }
     }
@@ -112,8 +118,10 @@ fun CreatingFolderFolderRecipe(
 fun ItemFolderRecipe(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    folderItem: Folder
-) {
+    folderItem: Folder,
+    viewFolderModel: FolderViewModel,
+    ) {
+    val recipeCount by viewFolderModel.getRecipeCountInFolder(folderItem.FolderId).collectAsState(0)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,7 +149,7 @@ fun ItemFolderRecipe(
                 fontFamily = montserratAlternatesItalicFont
             )
             Text(
-                text = "Количество рецептов в папке",
+                text = "$recipeCount",
                 fontSize = 18.sp,
                 fontFamily = montserratAlternatesItalicFont
             )

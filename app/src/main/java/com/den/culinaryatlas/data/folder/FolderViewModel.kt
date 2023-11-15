@@ -40,8 +40,8 @@ class FolderViewModel(private val folderDao: FolderDao, private val recipeDao: R
         }
     }
 
-    suspend fun removeRecipeFromFolder(folderId: Int, recipeId: Int) {
-        recipeInFolderDao.removeRecipeFromFolder(folderId, recipeId)
+    fun getRecipeCountInFolder(folderId: Int): Flow<Int> {
+        return recipeDao.getRecipeCountInFolder(folderId)
     }
 
     fun getRecipesInFolder(folderId: String): Flow<List<Recipe>> {

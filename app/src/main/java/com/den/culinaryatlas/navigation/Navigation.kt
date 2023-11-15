@@ -35,7 +35,7 @@ fun Navigation(
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = NavigationRoute.TabRowScreen.route) {
         composable(NavigationRoute.TabRowScreen.route) {
-            TabRowScreen(navController,stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent)
+            TabRowScreen(navController,stateRecipeState, onRecipeEvent, stateFolderState, onFolderEvent, viewFolderModel)
         }
         composable(NavigationRoute.ViewRecipeScreen.route + "/{recipeId}") { backStackEntry ->
             val arguments = backStackEntry.arguments
