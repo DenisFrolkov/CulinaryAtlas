@@ -23,6 +23,9 @@ interface RecipeDao {
     @Query("SELECT * FROM recipe WHERE RecipeId = :recipeId")
     fun getRecipeById(recipeId: String): Recipe
 
+    @Query("SELECT recipe.* FROM recipe JOIN recipeinfolder ON recipe.RecipeId = recipeinfolder.recipeId WHERE recipeinfolder.folderId = :folderId")
+    fun getRecipesInFolder(folderId: String): Flow<List<Recipe>>
+
     @Query("SELECT * FROM recipe ORDER BY title DESC")
     fun getRecipesOrderedByLastTitle(): Flow<List<Recipe>>
 }

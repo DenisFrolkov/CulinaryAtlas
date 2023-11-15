@@ -33,11 +33,6 @@ class RecipeInFolderViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RecipeInFolderState())
 
-    suspend fun getRecipesInFolder(folderId: String): List<RecipeInFolder> {
-        return withContext(Dispatchers.IO) {
-            recipeInFolderDao.getRecipesInFolder(folderId)
-        }
-    }
 
     fun onRecipeInFolderEvent(event: RecipeInFolderEvent) {
         when (event) {

@@ -75,6 +75,8 @@ fun ViewFolderScreen(
         value = viewFolderModel.getFolderById(folderId)
     }
 
+    val recipesInFolder by viewFolderModel.getRecipesInFolder(folderId).collectAsState(emptyList())
+
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
     val items = listOf("Редактировать", "Удалить")
 
@@ -86,7 +88,8 @@ fun ViewFolderScreen(
             it,
             onFolderEvent,
             viewFolderModel,
-            stateRecipeState
+            stateRecipeState,
+            recipesInFolder
         )
     }
 }
@@ -101,8 +104,9 @@ fun ViewFolder(
     folder: Folder,
     onFolderEvent: (FolderEvent) -> Unit,
     viewFolderModel: FolderViewModel,
-    stateRecipeState: RecipeState
-) {
+    stateRecipeState: RecipeState,
+    recipesInFolder: List<Recipe>
+    ) {
     var showDialog by remember { mutableStateOf(false) }
     val myCoroutineScope = CoroutineScope(Dispatchers.IO)
     var shouldClosePage by remember { mutableStateOf(true) }
@@ -228,7 +232,7 @@ fun ViewFolder(
                             )
                         }
                     }
-                    items(stateRecipeState.recipes) { recipeItem ->
+                    items(recipesInFolder) { recipeItem ->
                         RecipeViewFolder(
                             navController,
                             montserratAlternatesItalicFont,

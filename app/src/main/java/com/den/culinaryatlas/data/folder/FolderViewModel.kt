@@ -3,8 +3,11 @@ package com.den.culinaryatlas.data.folder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.den.culinaryatlas.data.recipe.Recipe
+import com.den.culinaryatlas.data.recipe.RecipeDao
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -15,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FolderViewModel(private val folderDao: FolderDao) : ViewModel() {
+class FolderViewModel(private val folderDao: FolderDao, private val recipeDao: RecipeDao) : ViewModel() {
     private val _sortType = MutableStateFlow(FolderSortType.TITLE)
     private val _folders = _sortType
         .flatMapLatest { sortType ->
@@ -37,6 +40,11 @@ class FolderViewModel(private val folderDao: FolderDao) : ViewModel() {
 
         }
     }
+
+    fun getRecipesInFolder(folderId: String): Flow<List<Recipe>> {
+        return recipeDao.getRecipesInFolder(folderId)
+    }
+
 
     suspend fun updateFolder(folder: Folder) {
         withContext(Dispatchers.IO) {
