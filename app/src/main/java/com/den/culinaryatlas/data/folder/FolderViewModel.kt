@@ -64,7 +64,6 @@ class FolderViewModel(private val folderDao: FolderDao) : ViewModel() {
                 }
                 _state.update {
                     it.copy(
-                        isAddingFolder = false,
                         title = "",
                         recipeQuantity = ""
                     )

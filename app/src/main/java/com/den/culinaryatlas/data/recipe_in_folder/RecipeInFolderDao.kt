@@ -10,14 +10,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeInFolderDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert()
     suspend fun upsert(recipeInFolder: RecipeInFolder)
-
-    @Delete()
+    @Delete
     suspend fun delete(recipeInFolder: RecipeInFolder)
 
+    @Query("SELECT * FROM RecipeInFolder WHERE folderId = :folderId")
+    suspend fun getRecipesInFolder(folderId: String): List<RecipeInFolder>
+
     @Query("SELECT * FROM recipeinfolder WHERE folderId = :folderId")
-    fun getRecipesInFolder(folderId: String): List<RecipeInFolder>
+    suspend fun getRecipeIdsForFolder(folderId: String): List<RecipeInFolder>
 
     @Query("SELECT * FROM RecipeInFolder ORDER BY recipeId DESC")
     fun getRecipeInFolderByLastFolderId(): Flow<List<RecipeInFolder>>

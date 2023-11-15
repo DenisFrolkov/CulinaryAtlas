@@ -9,6 +9,5 @@ sealed class FolderEvent {
     data class SetRecipeQuantity(val recipeQuantity: String): FolderEvent()
     data class SortFolders(val folderSortType: FolderSortType): FolderEvent()
     data class UpdateFolder(val updatedFolder: Folder): FolderEvent()
-
     data class DeleteFolder(val folder: Folder): FolderEvent()
 }

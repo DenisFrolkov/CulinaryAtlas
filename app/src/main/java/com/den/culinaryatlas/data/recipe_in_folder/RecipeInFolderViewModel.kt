@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RecipeInFolderViewModel( private val recipeInFolderDao: RecipeInFolderDao ) : ViewModel() {
+class RecipeInFolderViewModel(
+    private val recipeInFolderDao: RecipeInFolderDao
+) : ViewModel() {
     private val _sortType = MutableStateFlow(RecipeInFolderSortType.TITLE)
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _recipeInFolder = _sortType

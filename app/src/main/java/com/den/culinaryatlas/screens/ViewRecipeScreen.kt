@@ -149,9 +149,12 @@ fun ViewRecipe(
                             contentDescription = "Изменить информацию"
                         )
                         DropdownMenu(
-                            modifier = Modifier.width(IntrinsicSize.Max),
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .width(IntrinsicSize.Max)
+                                .size(184.dp, 110.dp)
+                                .background(Color.White, RoundedCornerShape(12.dp))
                         ) {
                             items.forEachIndexed { index, item ->
                                 androidx.compose.material.DropdownMenuItem(

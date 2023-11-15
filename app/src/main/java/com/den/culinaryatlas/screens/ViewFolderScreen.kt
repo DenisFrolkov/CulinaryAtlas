@@ -27,7 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,13 +51,8 @@ import com.den.culinaryatlas.data.folder.Folder
 import com.den.culinaryatlas.data.folder.FolderEvent
 import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.data.recipe.Recipe
-import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeState
-import com.den.culinaryatlas.data.recipe.RecipeViewModel
-import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolder
-import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
-import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.BasicOrange
 import com.den.culinaryatlas.ui.theme.Gray
@@ -90,13 +84,13 @@ fun ViewFolderScreen(
             montserratAlternatesItalicFont,
             items,
             it,
-            stateRecipeInFolder,
-            stateRecipeState,
             onFolderEvent,
-            viewFolderModel
+            viewFolderModel,
+            stateRecipeState
         )
     }
 }
+
 
 
 @Composable
@@ -105,10 +99,9 @@ fun ViewFolder(
     montserratAlternatesItalicFont: FontFamily,
     items: List<String>,
     folder: Folder,
-    stateRecipeInFolder: RecipeInFolderState,
-    stateRecipeState: RecipeState,
     onFolderEvent: (FolderEvent) -> Unit,
     viewFolderModel: FolderViewModel,
+    stateRecipeState: RecipeState
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val myCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -235,11 +228,11 @@ fun ViewFolder(
                             )
                         }
                     }
-                    items(stateRecipeState.recipes) { stateRecipeState ->
+                    items(stateRecipeState.recipes) { recipeItem ->
                         RecipeViewFolder(
                             navController,
                             montserratAlternatesItalicFont,
-                            stateRecipeState
+                            recipeItem
                         )
                     }
                 }
@@ -327,7 +320,7 @@ fun EditFolderDialog(
 fun RecipeViewFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    stateRecipeState: Recipe
+    recipeItem: Recipe
 ) {
     val imageURL = painterResource(id = R.drawable.recipe_image)
     Box(
@@ -338,7 +331,7 @@ fun RecipeViewFolder(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                navController.navigate(NavigationRoute.ViewRecipeScreen.route)
+                navController.navigate(NavigationRoute.ViewRecipeScreen.route + "/${recipeItem.recipeId}")
             }
             .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
     ) {
@@ -371,7 +364,7 @@ fun RecipeViewFolder(
                     .align(Alignment.CenterVertically),
                 fontSize = 14.sp,
                 fontFamily = montserratAlternatesItalicFont,
-                text = stateRecipeState.title
+                text = recipeItem.title
             )
         }
     }

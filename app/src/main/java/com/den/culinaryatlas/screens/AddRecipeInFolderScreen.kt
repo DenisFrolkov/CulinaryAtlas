@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -42,15 +41,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.folder.Folder
-import com.den.culinaryatlas.data.folder.FolderEvent
-import com.den.culinaryatlas.data.folder.FolderState
 import com.den.culinaryatlas.data.folder.FolderViewModel
-import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeState
-import com.den.culinaryatlas.data.recipe.RecipeViewModel
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
-import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
-import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderViewModel
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
@@ -63,6 +56,8 @@ fun AddRecipeInFolderScreen(
 ) {
     val montserratAlternatesItalicFont = FontFamily(Font(R.font.montserrat_alternates_italic))
 
+    var selectedRecipeId by remember { mutableStateOf(0) }
+
     val folderState by produceState<Folder?>(initialValue = null) {
         val folderModel = viewFolderModel.getFolderById(folder)
         value = folderModel
@@ -74,7 +69,12 @@ fun AddRecipeInFolderScreen(
             montserratAlternatesItalicFont,
             stateRecipeState,
             onRecipeInFolderEvent,
-            folderState!!
+            folderState!!,
+            selectedRecipeId,
+            onRecipeSelected = { newSelectedRecipeId ->
+                selectedRecipeId = newSelectedRecipeId
+                onRecipeInFolderEvent(RecipeInFolderEvent.SetRecipeId(selectedRecipeId))
+            }
         )
     }
 }
@@ -87,7 +87,9 @@ fun AddRecipeInFolder(
     montserratAlternatesItalicFont: FontFamily,
     stateRecipeState: RecipeState,
     onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
-    folder: Folder
+    folder: Folder,
+    selectedRecipeId: Int,
+    onRecipeSelected: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -96,6 +98,7 @@ fun AddRecipeInFolder(
     ) {
         LazyColumn {
             onRecipeInFolderEvent(RecipeInFolderEvent.SetFolderId(folder.FolderId))
+
             item {
                 Icon(
                     modifier = Modifier
@@ -118,7 +121,6 @@ fun AddRecipeInFolder(
                 )
             }
             items(stateRecipeState.recipes) { recipeState ->
-                var click by remember { mutableStateOf(false) }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -126,13 +128,20 @@ fun AddRecipeInFolder(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) {
-                            click = !click
+                            if (selectedRecipeId == recipeState.recipeId) {
+                                onRecipeSelected(0)
+                            } else {
+                                onRecipeSelected(recipeState.recipeId)
+                            }
                         }
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                         .clip(shape = RoundedCornerShape(12.dp))
-                        .border(.1.dp, Color.Black, RoundedCornerShape(12.dp))
+                        .border(
+                            width = 2.dp,
+                            color = Color.Transparent,
+                            shape = RoundedCornerShape(12.dp)
+                        )
                 ) {
-                    if (click) onRecipeInFolderEvent(RecipeInFolderEvent.SetRecipeId(recipeState.recipeId)) else onRecipeInFolderEvent(RecipeInFolderEvent.SetRecipeId(0))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -154,13 +163,13 @@ fun AddRecipeInFolder(
                             fontFamily = montserratAlternatesItalicFont,
                             text = recipeState.title
                         )
-                        if (click) {
+                        if (recipeState.recipeId == selectedRecipeId) {
                             Box(
                                 modifier = Modifier
                                     .size(26.dp),
                                 contentAlignment = Alignment.TopEnd
                             ) {
-                                Icon(imageVector = Icons.Default.Done, contentDescription = "в")
+                                Icon(imageVector = Icons.Default.Done, contentDescription = "Удалить")
                             }
                         }
                     }
