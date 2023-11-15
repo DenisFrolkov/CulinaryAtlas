@@ -48,7 +48,7 @@ fun Navigation(
             val arguments = backStackEntry.arguments
             val folderId = arguments?.getString("folderId")
             folderId?.let {
-                ViewFolderScreen(navController, viewFolderModel, it, stateRecipeInFolder, onFolderEvent, stateRecipeState)
+                ViewFolderScreen(navController, viewFolderModel, it, stateRecipeInFolder, onFolderEvent, stateRecipeState, onRecipeInFolderEvent)
             }
         }
         composable(NavigationRoute.CreatingRecipeScreen.route) {

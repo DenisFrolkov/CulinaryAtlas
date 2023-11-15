@@ -16,6 +16,9 @@ interface RecipeInFolderDao {
     @Delete
     suspend fun delete(recipeInFolder: RecipeInFolder)
 
+    @Query("DELETE FROM recipeinfolder WHERE folderId = :folderId AND recipeId = :recipeId")
+    suspend fun removeRecipeFromFolder(folderId: Int, recipeId: Int)
+
 
     @Query("SELECT * FROM RecipeInFolder ORDER BY recipeId DESC")
     fun getRecipeInFolderByLastFolderId(): Flow<List<RecipeInFolder>>

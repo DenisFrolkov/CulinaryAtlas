@@ -44,6 +44,7 @@ import com.den.culinaryatlas.data.folder.Folder
 import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.data.recipe.RecipeState
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
+import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.SoftOrange
 
 @Composable
@@ -166,10 +167,15 @@ fun AddRecipeInFolder(
                         if (recipeState.recipeId == selectedRecipeId) {
                             Box(
                                 modifier = Modifier
-                                    .size(26.dp),
+                                    .fillMaxWidth(),
                                 contentAlignment = Alignment.TopEnd
                             ) {
-                                Icon(imageVector = Icons.Default.Done, contentDescription = "Удалить")
+                                Icon(
+                                    modifier = Modifier
+                                        .size(26.dp),
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = "Удалить"
+                                )
                             }
                         }
                     }

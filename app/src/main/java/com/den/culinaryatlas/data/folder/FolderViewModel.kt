@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FolderViewModel(private val folderDao: FolderDao, private val recipeDao: RecipeDao) : ViewModel() {
+class FolderViewModel(private val folderDao: FolderDao, private val recipeDao: RecipeDao, private val recipeInFolderDao: RecipeInFolderDao) : ViewModel() {
     private val _sortType = MutableStateFlow(FolderSortType.TITLE)
     private val _folders = _sortType
         .flatMapLatest { sortType ->
@@ -37,8 +37,11 @@ class FolderViewModel(private val folderDao: FolderDao, private val recipeDao: R
     suspend fun getFolderById(folderId: String): Folder {
         return withContext(Dispatchers.IO) {
             folderDao.getFolderById(folderId)
-
         }
+    }
+
+    suspend fun removeRecipeFromFolder(folderId: Int, recipeId: Int) {
+        recipeInFolderDao.removeRecipeFromFolder(folderId, recipeId)
     }
 
     fun getRecipesInFolder(folderId: String): Flow<List<Recipe>> {

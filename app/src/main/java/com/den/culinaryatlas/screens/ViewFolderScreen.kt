@@ -23,6 +23,8 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -52,6 +54,7 @@ import com.den.culinaryatlas.data.folder.FolderEvent
 import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.data.recipe.Recipe
 import com.den.culinaryatlas.data.recipe.RecipeState
+import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
 import com.den.culinaryatlas.navigation.NavigationRoute
 import com.den.culinaryatlas.ui.theme.BasicOrange
@@ -69,7 +72,8 @@ fun ViewFolderScreen(
     folderId: String,
     stateRecipeInFolder: RecipeInFolderState,
     onFolderEvent: (FolderEvent) -> Unit,
-    stateRecipeState: RecipeState
+    stateRecipeState: RecipeState,
+    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit
 ) {
     val folder by produceState<Folder?>(initialValue = null) {
         value = viewFolderModel.getFolderById(folderId)
@@ -89,11 +93,11 @@ fun ViewFolderScreen(
             onFolderEvent,
             viewFolderModel,
             stateRecipeState,
-            recipesInFolder
+            recipesInFolder,
+            onRecipeInFolderEvent
         )
     }
 }
-
 
 
 @Composable
@@ -105,8 +109,10 @@ fun ViewFolder(
     onFolderEvent: (FolderEvent) -> Unit,
     viewFolderModel: FolderViewModel,
     stateRecipeState: RecipeState,
-    recipesInFolder: List<Recipe>
-    ) {
+    recipesInFolder: List<Recipe>,
+    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit
+
+) {
     var showDialog by remember { mutableStateOf(false) }
     val myCoroutineScope = CoroutineScope(Dispatchers.IO)
     var shouldClosePage by remember { mutableStateOf(true) }
@@ -236,7 +242,11 @@ fun ViewFolder(
                         RecipeViewFolder(
                             navController,
                             montserratAlternatesItalicFont,
-                            recipeItem
+                            recipeItem,
+                            onRecipeInFolderEvent,
+                            myCoroutineScope,
+                            folder,
+                            viewFolderModel
                         )
                     }
                 }
@@ -324,9 +334,12 @@ fun EditFolderDialog(
 fun RecipeViewFolder(
     navController: NavController,
     montserratAlternatesItalicFont: FontFamily,
-    recipeItem: Recipe
+    recipeItem: Recipe,
+    onRecipeInFolderEvent: (RecipeInFolderEvent) -> Unit,
+    myCoroutineScope: CoroutineScope,
+    folder: Folder,
+    viewFolderModel: FolderViewModel
 ) {
-    val imageURL = painterResource(id = R.drawable.recipe_image)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -345,23 +358,14 @@ fun RecipeViewFolder(
                 .background(color = SoftOrange, shape = RoundedCornerShape(12.dp))
                 .padding(16.dp)
         ) {
-            if (imageURL != null) {
-                Image(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    painter = imageURL,
-                    contentDescription = "Фото готового блюда"
-                )
-            } else {
-                Image(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    painter = painterResource(id = R.drawable.photo_space_image),
-                    contentDescription = "Заменяющее изображение"
-                )
-            }
+            Image(
+                modifier = Modifier
+                    .size(90.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                painter = painterResource(id = R.drawable.photo_space_image),
+                contentDescription = "Заменяющее изображение"
+            )
+
             Text(
                 modifier = Modifier
                     .padding(start = 12.dp)

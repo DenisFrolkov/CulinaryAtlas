@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return FolderViewModel(db.folderDao, db.recipeDao) as T
+                    return FolderViewModel(db.folderDao, db.recipeDao, db.recipeInFolderDao) as T
                 }
             }
         }
