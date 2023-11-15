@@ -22,6 +22,6 @@ interface FolderDao {
     @Query("SELECT * FROM folder WHERE FolderId = :FolderId")
     fun getFolderById(FolderId: String): Folder
 
-    @Query("SELECT * FROM folder ORDER BY recipeQuantity DESC")
+    @Query("SELECT * FROM folder ORDER BY title DESC")
     fun getFoldersOrderedByLastTitle(): Flow<List<Folder>>
 }

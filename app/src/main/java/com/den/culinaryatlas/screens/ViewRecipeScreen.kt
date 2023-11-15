@@ -8,18 +8,24 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text2.input.TextFieldCharSequence
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -31,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,6 +51,7 @@ import com.den.culinaryatlas.data.recipe.Recipe
 import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
+import com.den.culinaryatlas.ui.theme.BasicOrange
 import com.den.culinaryatlas.ui.theme.SoftOrange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -141,7 +149,7 @@ fun ViewRecipe(
                             contentDescription = "Изменить информацию"
                         )
                         DropdownMenu(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.width(IntrinsicSize.Max),
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
                         ) {
@@ -186,10 +194,12 @@ fun ViewRecipe(
                     EditRecipeDialog(
                         onDismiss = {
                             showDialog = false
+                            shouldClosePage = showDialog
                         },
                         recipe = recipe,
                         viewModel,
-                        onRecipeEvent
+                        onRecipeEvent,
+                        montserratAlternatesItalicFont
                     )
                 }
             }
@@ -204,7 +214,8 @@ fun EditRecipeDialog(
     onDismiss: () -> Unit,
     recipe: Recipe,
     RecipeViewModel: RecipeViewModel,
-    onRecipeEvent: (RecipeEvent) -> Unit
+    onRecipeEvent: (RecipeEvent) -> Unit,
+    montserratAlternatesItalicFont: FontFamily
 ) {
 
     val myCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -229,7 +240,8 @@ fun EditRecipeDialog(
                     .padding(8.dp),
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Введите новое название") }
+                label = { Text("Введите новое название") },
+                textStyle = TextStyle(fontFamily = montserratAlternatesItalicFont, fontSize = 16.sp)
             )
 
             OutlinedTextField(
@@ -238,7 +250,8 @@ fun EditRecipeDialog(
                     .padding(8.dp),
                 value = ingredient,
                 onValueChange = { ingredient = it },
-                label = { Text("Добавьте новые ингредиенты") }
+                label = { Text("Добавьте новые ингредиенты") },
+                textStyle = TextStyle(fontFamily = montserratAlternatesItalicFont, fontSize = 16.sp)
             )
 
             OutlinedTextField(
@@ -247,7 +260,8 @@ fun EditRecipeDialog(
                     .padding(8.dp),
                 value = action,
                 onValueChange = { action = it },
-                label = { Text("Опишите новые действия") }
+                label = { Text("Опишите новые действия") },
+                textStyle = TextStyle(fontFamily = montserratAlternatesItalicFont, fontSize = 16.sp)
             )
 
             Button(
@@ -263,11 +277,17 @@ fun EditRecipeDialog(
                         onDismiss()
                     }
                 },
+                colors = ButtonDefaults.buttonColors(BasicOrange),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
                     .padding(8.dp)
             ) {
-                Text("Сохранить")
+                Text(
+                    "Сохранить",
+                    fontFamily = montserratAlternatesItalicFont,
+                    fontSize = 16.sp
+                )
             }
         }
     }

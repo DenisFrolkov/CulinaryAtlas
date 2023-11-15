@@ -8,12 +8,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +23,9 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,10 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.den.culinaryatlas.R
 import com.den.culinaryatlas.data.folder.Folder
@@ -46,11 +54,13 @@ import com.den.culinaryatlas.data.folder.FolderViewModel
 import com.den.culinaryatlas.data.recipe.Recipe
 import com.den.culinaryatlas.data.recipe.RecipeEvent
 import com.den.culinaryatlas.data.recipe.RecipeState
+import com.den.culinaryatlas.data.recipe.RecipeViewModel
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolder
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderEvent
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderState
 import com.den.culinaryatlas.data.recipe_in_folder.RecipeInFolderViewModel
 import com.den.culinaryatlas.navigation.NavigationRoute
+import com.den.culinaryatlas.ui.theme.BasicOrange
 import com.den.culinaryatlas.ui.theme.Gray
 import com.den.culinaryatlas.ui.theme.SoftOrange
 import kotlinx.coroutines.CoroutineScope
@@ -82,7 +92,8 @@ fun ViewFolderScreen(
             it,
             stateRecipeInFolder,
             stateRecipeState,
-            onFolderEvent
+            onFolderEvent,
+            viewFolderModel
         )
     }
 }
@@ -96,17 +107,19 @@ fun ViewFolder(
     folder: Folder,
     stateRecipeInFolder: RecipeInFolderState,
     stateRecipeState: RecipeState,
-    onFolderEvent: (FolderEvent) -> Unit
+    onFolderEvent: (FolderEvent) -> Unit,
+    viewFolderModel: FolderViewModel,
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     val myCoroutineScope = CoroutineScope(Dispatchers.IO)
     var shouldClosePage by remember { mutableStateOf(true) }
     var expanded by remember { mutableStateOf(false) }
-    if (shouldClosePage) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-        ) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        if (shouldClosePage) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
@@ -149,18 +162,20 @@ fun ViewFolder(
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
                             modifier = Modifier
+                                .width(IntrinsicSize.Max)
                                 .size(184.dp, 110.dp)
                                 .background(Color.White, RoundedCornerShape(12.dp))
                         ) {
-                            items.forEach { item ->
+                            items.forEachIndexed { index, item ->
                                 DropdownMenuItem(
                                     onClick = {
                                         expanded = false
-                                        when (item) {
-                                            "Редактировать" -> {
+                                        when (index) {
+                                            0 -> {
+                                                showDialog = true
                                             }
 
-                                            "Удалить" -> {
+                                            1 -> {
                                                 myCoroutineScope.launch {
                                                     onFolderEvent(FolderEvent.DeleteFolder(folder))
                                                     withContext(Dispatchers.Main) {
@@ -183,9 +198,6 @@ fun ViewFolder(
                                         )
                                     }
                                 }
-                            }
-                            LaunchedEffect(key1 = "Удалить") {
-                                onFolderEvent(FolderEvent.DeleteFolder(folder))
                             }
                         }
                     }
@@ -232,9 +244,81 @@ fun ViewFolder(
                     }
                 }
             }
+            if (showDialog) {
+                EditFolderDialog(
+                    onDismiss = {
+                        showDialog = false
+                        shouldClosePage = showDialog
+                    },
+                    folder,
+                    viewFolderModel,
+                    onFolderEvent,
+                    montserratAlternatesItalicFont
+                )
+            }
+        } else {
+            navController.navigate(NavigationRoute.TabRowScreen.route)
         }
-    } else {
-        navController.navigate(NavigationRoute.TabRowScreen.route)
+    }
+}
+
+@Composable
+fun EditFolderDialog(
+    onDismiss: () -> Unit,
+    folder: Folder,
+    FolderViewModel: FolderViewModel,
+    onFolderEvent: (FolderEvent) -> Unit,
+    montserratAlternatesItalicFont: FontFamily
+) {
+
+    val myCoroutineScope = CoroutineScope(Dispatchers.IO)
+
+    var title by remember { mutableStateOf(folder.title) }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Введите новое название") },
+                textStyle = TextStyle(fontFamily = montserratAlternatesItalicFont, fontSize = 16.sp)
+            )
+            Button(
+                onClick = {
+                    val updatedFolder = Folder(
+                        title = title,
+                        FolderId = folder.FolderId
+                    )
+                    myCoroutineScope.launch {
+                        onFolderEvent(FolderEvent.UpdateFolder(updatedFolder))
+                        onDismiss()
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(BasicOrange),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(BasicOrange)
+            ) {
+                Text(
+                    "Сохранить",
+                    fontFamily = montserratAlternatesItalicFont,
+                    fontSize = 16.sp
+                )
+            }
+        }
     }
 }
 

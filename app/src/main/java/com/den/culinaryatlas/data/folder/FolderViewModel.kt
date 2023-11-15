@@ -2,6 +2,7 @@ package com.den.culinaryatlas.data.folder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.den.culinaryatlas.data.recipe.Recipe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +38,12 @@ class FolderViewModel(private val folderDao: FolderDao) : ViewModel() {
         }
     }
 
+    suspend fun updateFolder(folder: Folder) {
+        withContext(Dispatchers.IO) {
+            folderDao.updateFolder(folder)
+        }
+    }
+
     fun onFolderEvent(event: FolderEvent) {
         when (event) {
             is FolderEvent.DeleteFolder -> {
@@ -46,13 +53,11 @@ class FolderViewModel(private val folderDao: FolderDao) : ViewModel() {
             }
             FolderEvent.SaveFolder -> {
                 val title = state.value.title
-                val recipeQuantity = state.value.recipeQuantity
 
                 if (title.isBlank()) return
 
                 val folder = Folder(
-                    title = title,
-                    recipeQuantity = recipeQuantity
+                    title = title
                 )
                 viewModelScope.launch {
                     folderDao.upsertFolder(folder)
@@ -81,6 +86,13 @@ class FolderViewModel(private val folderDao: FolderDao) : ViewModel() {
             }
             is FolderEvent.SortFolders -> {
                 _sortType.value = event.folderSortType
+            }
+
+            is FolderEvent.UpdateFolder -> {
+                val updateFolder = event.updatedFolder
+                viewModelScope.launch {
+                    updateFolder(updateFolder)
+                }
             }
         }
     }
